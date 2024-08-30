@@ -1,0 +1,3 @@
+[submodule "External/LibreHardwareMonitorLib"]
+	path = External/LibreHardwareMonitorLib
+	url = https://github.com/LibreHardwareMonitor/LibreHardwareMonitor.git
