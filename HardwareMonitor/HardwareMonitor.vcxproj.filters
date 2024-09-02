@@ -32,6 +32,8 @@
     <None Include="main.qml">
       <Filter>Source Files</Filter>
     </None>
-
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="HardwareMonitor.manifest" />
   </ItemGroup>
 </Project>

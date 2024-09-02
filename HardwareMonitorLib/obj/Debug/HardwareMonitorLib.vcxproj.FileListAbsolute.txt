@@ -1,0 +1,2 @@
+D:\MyProjects\HardwareMonitor\HardwareMonitorLib\obj\Debug\HardwareMonitorLib.vcxproj.AssemblyReference.cache
+D:\MyProjects\HardwareMonitor\HardwareMonitorLib\obj\Debug\Hardware.9E37A1E5.Up2Date
