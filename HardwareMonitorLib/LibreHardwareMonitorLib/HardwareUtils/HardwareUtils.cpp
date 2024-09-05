@@ -1,25 +1,36 @@
 #include "HardwareUtils.h"
-
-Hardware ConvertHardware(LibreHardwareMonitor::Hardware::IHardware^ hw)
+#include <map>
+std::shared_ptr<Hardware> ConvertHardware(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_ptr<Hardware> parent)
 {
-   Hardware hardware;
-   hardware.name = msclr::interop::marshal_as<std::wstring>(hw->Name);
-   hardware.parent = hw->Parent != nullptr ? msclr::interop::marshal_as<std::wstring>(hw->Parent->Name) : L"";
+   auto hardware = std::make_shared<Hardware>(msclr::interop::marshal_as<std::wstring>(hw->Name));
+   hardware->parent = parent;
+
+   for each (LibreHardwareMonitor::Hardware::IHardware ^ subHardware in hw->SubHardware)
+   {
+      hardware->children.push_back(ConvertHardware(subHardware, hardware));
+   }
+
+   std::map<std::wstring, std::vector<Sensor>> sensors;
 
    for each (LibreHardwareMonitor::Hardware::ISensor ^ sr in hw->Sensors)
    {
       Sensor sensor;
       sensor.name = msclr::interop::marshal_as<std::wstring>(sr->Name);
-      sensor.value = sr->Value.HasValue ? sr->Value.Value : 0.0f;
-      sensor.min = sr->Min.HasValue ? sr->Min.Value : 0.0f;
-      sensor.max = sr->Max.HasValue ? sr->Max.Value : 0.0f;
+      sensor.value = std::to_wstring(sr->Value.HasValue ? sr->Value.Value : 0.0f);
+      sensor.min = std::to_wstring(sr->Min.HasValue ? sr->Min.Value : 0.0f);
+      sensor.max = std::to_wstring(sr->Max.HasValue ? sr->Max.Value : 0.0f);
 
-      hardware.sensors[msclr::interop::marshal_as<std::wstring>(sr->SensorType.ToString())].push_back(sensor);
+      sensors[msclr::interop::marshal_as<std::wstring>(sr->SensorType.ToString())].push_back(sensor);
    }
 
-   for each (LibreHardwareMonitor::Hardware::IHardware ^ subHardware in hw->SubHardware)
+   for (auto& sensorGroup : sensors)
    {
-      hardware.children.push_back(ConvertHardware(subHardware));
+      hardware->children.push_back(std::make_shared<Hardware>(sensorGroup.first, hardware, Sensor(), std::vector<std::shared_ptr<Hardware>>()));
+
+      for (auto& sensor : sensorGroup.second)
+      {
+         hardware->children.back()->children.push_back(std::make_shared<Hardware>(sensor.name, hardware->children.back(), sensor, std::vector<std::shared_ptr<Hardware>>()));
+      }
    }
 
    return hardware;

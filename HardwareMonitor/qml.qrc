@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/qt/qml/hardwaremonitor">
+    <qresource prefix="/qt/qml/hardwareMonitor">
         <file>main.qml</file>
     </qresource>
 </RCC>

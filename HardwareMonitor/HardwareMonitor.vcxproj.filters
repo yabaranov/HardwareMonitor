@@ -32,8 +32,16 @@
     <None Include="main.qml">
       <Filter>Source Files</Filter>
     </None>
+    <ClCompile Include="HardwareTreeModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="HardwareMonitor.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="HardwareTreeModel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

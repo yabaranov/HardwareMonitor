@@ -21,7 +21,7 @@ public:
    SystemMonitorWrapper();
    ~SystemMonitorWrapper();
 
-   std::vector<Hardware> GetHardwareData();
+   std::shared_ptr<Hardware> GetHardwareData();
 
 private:
    std::unique_ptr<ComputerWrapper> m_computer;

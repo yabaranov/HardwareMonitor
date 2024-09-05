@@ -2,6 +2,7 @@
 #include "LibreHardwareMonitorLib/ComputerWrapper.h"
 #include "LibreHardwareMonitorLib/UpdateVisitor/UpdateVisitorWrapper.h"
 #include "LibreHardwareMonitorLib/HardwareUtils/HardwareUtils.h"
+
 SystemMonitorWrapper::SystemMonitorWrapper() : m_computer(std::make_unique<ComputerWrapper>()), m_updateVisitor(std::make_unique<UpdateVisitorWrapper>())
 {
    m_updateVisitor->API = gcnew UpdateVisitor();
@@ -21,15 +22,15 @@ SystemMonitorWrapper::~SystemMonitorWrapper()
 {
    m_computer->API->Close();
 }
-std::vector<Hardware> SystemMonitorWrapper::GetHardwareData() 
+std::shared_ptr<Hardware> SystemMonitorWrapper::GetHardwareData() 
 {
    m_computer->API->Accept(m_updateVisitor->API.get());
-   std::vector<Hardware> hardwareList;
+   auto hardwareRoot = std::make_shared<Hardware>(msclr::interop::marshal_as<std::wstring>(System::Environment::MachineName));
 
    for each (LibreHardwareMonitor::Hardware::IHardware ^ hw in m_computer->API->Hardware) 
    {
-      hardwareList.push_back(ConvertHardware(hw));
+      hardwareRoot->children.push_back(ConvertHardware(hw, hardwareRoot));
    }
 
-   return hardwareList;
+   return hardwareRoot;
 }

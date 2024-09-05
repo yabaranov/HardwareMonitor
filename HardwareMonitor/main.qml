@@ -1,17 +1,39 @@
-import QtQuick 2.9
-import QtQuick.Window 2.2
+﻿import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import hardwareTreeModel
+
+
 
 Window {
-    visible: true
     width: 640
     height: 480
-    title: "HardwareMonitor"
-    Text {
-        anchors.fill: parent
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        font.bold: true
-        font.pointSize: 42
-        text: "Hello World!"
+    visible: true
+    title: qsTr("Hello Qt6 TreeView")
+
+TreeView {
+    id: control
+    anchors.fill: parent
+    anchors.margins: 10
+
+    model: HardwareTreeModel {
+         id: tree_model
+         Component.onCompleted: {
+         control.expandRecursively()
+         }
     }
+
+    delegate: TreeViewDelegate{}
+
+    Timer {
+        id: updateTimer
+        interval: 1000
+        repeat: true
+        running: true
+        onTriggered: {
+            tree_model.resetItems()
+            control.expandRecursively()
+        }
+    }
+}
 }
