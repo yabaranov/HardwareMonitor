@@ -1,9 +1,8 @@
 #include "HardwareTreeModel.h"
 
 
-HardwareTreeModel::HardwareTreeModel(QObject* parent) : QAbstractItemModel(parent)
+HardwareTreeModel::HardwareTreeModel(std::shared_ptr<Hardware> rootItem, QObject* parent) : QAbstractItemModel(parent), m_rootItem(rootItem)
 { 
-   m_rootItem = std::make_shared<Hardware>(L"");  
 }
 
 QModelIndex HardwareTreeModel::index(int row, int column, const QModelIndex& parent) const
@@ -57,11 +56,11 @@ QVariant HardwareTreeModel::data(const QModelIndex& index, int role) const {
    }
    switch (role) 
    {
-   case NameRole: return QString::fromStdWString(item->name);
-   case ValueRole: return QString::fromStdWString(item->sensor.value);
-   case MinRole: return QString::fromStdWString(item->sensor.min);
-   case MaxRole: return QString::fromStdWString(item->sensor.max);
-   default: break;
+      case NameRole: return QString::fromStdWString(item->name);
+      case ValueRole: return QString::fromStdWString(item->sensor.value);
+      case MinRole: return QString::fromStdWString(item->sensor.min);
+      case MaxRole: return QString::fromStdWString(item->sensor.max);
+      default: break;
    }
    return QVariant();
 }
@@ -85,11 +84,41 @@ Hardware* HardwareTreeModel::getItem(const QModelIndex& index) const
    return m_rootItem.get();
 }
 
-void HardwareTreeModel::resetItems(std::shared_ptr<Hardware> rootItem)
+void HardwareTreeModel::updateNode(std::shared_ptr<Hardware> currentNode, std::shared_ptr<Hardware> newNode)
 {
-   beginResetModel();
+   if (currentNode->sensor.value != newNode->sensor.value)
+   {
+      QModelIndex index = createIndex(currentNode->position(), 1, currentNode.get());
+      currentNode->sensor.value = newNode->sensor.value;
+      emit dataChanged(index, index);
+   }
+
+   if (currentNode->sensor.min != newNode->sensor.min)
+   {
+      QModelIndex index = createIndex(currentNode->position(), 2, currentNode.get());
+      currentNode->sensor.min = newNode->sensor.min;
+      emit dataChanged(index, index);
+   }
+
+   if (currentNode->sensor.max != newNode->sensor.max)
+   {
+      QModelIndex index = createIndex(currentNode->position(), 3, currentNode.get());
+      currentNode->sensor.max = newNode->sensor.max;
+      emit dataChanged(index, index);
+   }
+
+   // Рекурсивно обходим дочерние узлы
+   for (size_t i = 0; i < currentNode->children.size(); ++i) {
+      updateNode(currentNode->children[i], newNode->children[i]);
+   }
+}
+
+void HardwareTreeModel::updateItems(std::shared_ptr<Hardware> rootItem)
+{
+   /*beginResetModel();
    m_rootItem = rootItem;
-   endResetModel();
-   emit dataChanged();
+   endResetModel();*/
+
+   updateNode(m_rootItem, rootItem);
 }
 

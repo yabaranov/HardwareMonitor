@@ -25,7 +25,7 @@ SystemMonitorWrapper::~SystemMonitorWrapper()
 std::shared_ptr<Hardware> SystemMonitorWrapper::GetHardwareData() 
 {
    m_computer->API->Accept(m_updateVisitor->API.get());
-   auto hardwareRoot = std::make_shared<Hardware>(msclr::interop::marshal_as<std::wstring>(System::Environment::MachineName));
+   auto hardwareRoot = std::make_shared<Hardware>(L"RootItem");
 
    for each (LibreHardwareMonitor::Hardware::IHardware ^ hw in m_computer->API->Hardware) 
    {

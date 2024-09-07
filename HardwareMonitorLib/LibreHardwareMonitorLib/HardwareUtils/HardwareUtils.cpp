@@ -16,9 +16,9 @@ std::shared_ptr<Hardware> ConvertHardware(LibreHardwareMonitor::Hardware::IHardw
    {
       Sensor sensor;
       sensor.name = msclr::interop::marshal_as<std::wstring>(sr->Name);
-      sensor.value = std::to_wstring(sr->Value.HasValue ? sr->Value.Value : 0.0f);
-      sensor.min = std::to_wstring(sr->Min.HasValue ? sr->Min.Value : 0.0f);
-      sensor.max = std::to_wstring(sr->Max.HasValue ? sr->Max.Value : 0.0f);
+      sensor.value = sr->Value.HasValue ? std::to_wstring( sr->Value.Value) : L"-";
+      sensor.min = sr->Min.HasValue ? std::to_wstring(sr->Min.Value) : L"-";
+      sensor.max = sr->Max.HasValue ? std::to_wstring(sr->Max.Value) : L"-";
 
       sensors[msclr::interop::marshal_as<std::wstring>(sr->SensorType.ToString())].push_back(sensor);
    }

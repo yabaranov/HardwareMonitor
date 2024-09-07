@@ -29,15 +29,10 @@ Window
       anchors.bottom: parent.bottom
       anchors.margins: 10
       model: treeModel
-      delegate: TreeViewDelegate{}
-
-      Connections 
+      delegate: TreeViewDelegate{}      
+      Component.onCompleted: 
       {
-         target: treeModel
-         onDataChanged: 
-         {
-            treeView.expandRecursively(); 
-         }
+        treeView.expandRecursively()
       }
    }
 }
