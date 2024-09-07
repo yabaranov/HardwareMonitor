@@ -3,7 +3,7 @@
 #include <QAbstractItemModel>
 #include <qqml.h>
 #include "HardwareData.h"
-#include "HardwareMonitorlib.h"
+
 
 class HardwareTreeModel : public QAbstractItemModel
 {
@@ -30,10 +30,14 @@ public:
    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
    QHash<int, QByteArray> roleNames() const override;
 
-   Q_INVOKABLE void resetItems();
+signals:
+   void dataChanged();
+
+public slots:
+   void resetItems(std::shared_ptr<Hardware> rootItem);
 
 private:
    Hardware* getItem(const QModelIndex& index) const;
    std::shared_ptr<Hardware> m_rootItem;
-   SystemMonitorWrapper monitor;
+
 };

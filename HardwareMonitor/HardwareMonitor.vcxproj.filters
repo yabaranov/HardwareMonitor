@@ -35,12 +35,24 @@
     <ClCompile Include="HardwareTreeModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Worker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="HardwareMonitor.manifest" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="HardwareTreeModel.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Worker.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Controller.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

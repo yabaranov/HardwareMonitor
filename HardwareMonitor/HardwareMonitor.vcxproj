@@ -119,8 +119,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Controller.cpp" />
     <ClCompile Include="HardwareTreeModel.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Worker.cpp" />
     <QtRcc Include="qml.qrc" />
     <None Include="main.qml" />
   </ItemGroup>
@@ -134,6 +136,12 @@
     <ProjectReference Include="..\HardwareMonitorLib\HardwareMonitorLib.vcxproj">
       <Project>{1ea09640-8727-4670-b47d-28f3683df346}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Worker.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Controller.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

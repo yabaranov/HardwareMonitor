@@ -1,8 +1,9 @@
 #include "HardwareTreeModel.h"
 
+
 HardwareTreeModel::HardwareTreeModel(QObject* parent) : QAbstractItemModel(parent)
-{
-   resetItems();
+{ 
+   m_rootItem = std::make_shared<Hardware>(L"");  
 }
 
 QModelIndex HardwareTreeModel::index(int row, int column, const QModelIndex& parent) const
@@ -84,10 +85,11 @@ Hardware* HardwareTreeModel::getItem(const QModelIndex& index) const
    return m_rootItem.get();
 }
 
-Q_INVOKABLE void HardwareTreeModel::resetItems()
+void HardwareTreeModel::resetItems(std::shared_ptr<Hardware> rootItem)
 {
    beginResetModel();
-   m_rootItem = monitor.GetHardwareData();
+   m_rootItem = rootItem;
    endResetModel();
+   emit dataChanged();
 }
 
