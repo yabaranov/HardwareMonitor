@@ -35,10 +35,10 @@
     <ClCompile Include="HardwareTreeModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Worker.cpp">
+    <ClCompile Include="HardwareThreadWorker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Controller.cpp">
+    <ClCompile Include="TreeViewController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -49,10 +49,10 @@
     <QtMoc Include="HardwareTreeModel.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Worker.h">
+    <QtMoc Include="HardwareThreadWorker.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="Controller.h">
+    <QtMoc Include="TreeViewController.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

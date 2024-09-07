@@ -1,26 +1,17 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "HardwareTreeModel.h"
 #include <QQmlContext>
-#include "Controller.h"
+#include "TreeViewController.h"
 
 int main(int argc, char *argv[])
 {
-#if defined(Q_OS_WIN) && QT_VERSION_CHECK(5, 6, 0) <= QT_VERSION && QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-
     QGuiApplication app(argc, argv);
-
-    qmlRegisterType<HardwareTreeModel>("hardwareTreeModel", 1, 0, "HardwareTreeModel");
-
     QQmlApplicationEngine engine;
 
-    TreeViewController controller;
-    controller.makeThread();
+    TreeViewController treeViewController;
+    treeViewController.makeHardwareThread();
 
-    engine.rootContext()->setContextProperty("controller", &controller);
-
+    engine.rootContext()->setContextProperty("treeViewController", &treeViewController);
 
     engine.load(QUrl(QStringLiteral("qrc:/qml/hardwareMonitor/main.qml")));
     if (engine.rootObjects().isEmpty())

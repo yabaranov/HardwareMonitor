@@ -3,7 +3,7 @@
 #include <QTimer>
 #include "HardwareMonitorLib.h"
 
-class Worker : public QObject {
+class HardwareThreadWorker : public QObject {
    Q_OBJECT
 
 public slots:

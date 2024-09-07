@@ -119,10 +119,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="TreeViewController.cpp" />
     <ClCompile Include="HardwareTreeModel.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Worker.cpp" />
+    <ClCompile Include="HardwareThreadWorker.cpp" />
     <QtRcc Include="qml.qrc" />
     <None Include="main.qml" />
   </ItemGroup>
@@ -138,10 +138,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="Worker.h" />
+    <QtMoc Include="HardwareThreadWorker.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="Controller.h" />
+    <QtMoc Include="TreeViewController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
