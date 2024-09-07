@@ -11,10 +11,22 @@ Window
 
    property var treeModel: treeViewController.getHardwareTreeModel()
 
+   HorizontalHeaderView 
+   {
+        id: horizontalHeader
+        anchors.left: treeView.left
+        anchors.top: parent.top
+        syncView: treeView
+        model: ["Sensor", "Value", "Min", "Max"]
+    }
+
    TreeView 
    {
-      id: control
-      anchors.fill: parent
+      id: treeView
+      anchors.left: parent.left
+      anchors.top: horizontalHeader.bottom
+      anchors.right: parent.right
+      anchors.bottom: parent.bottom
       anchors.margins: 10
       model: treeModel
       delegate: TreeViewDelegate{}
@@ -24,7 +36,7 @@ Window
          target: treeModel
          onDataChanged: 
          {
-            control.expandRecursively(); 
+            treeView.expandRecursively(); 
          }
       }
    }
