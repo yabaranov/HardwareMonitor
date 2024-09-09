@@ -40,12 +40,17 @@
     <QtModules>quick</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
     <QtQMLDebugEnable>true</QtQMLDebugEnable>
+    <QtDeployDir>@(Qt->'%(OutDir)')</QtDeployDir>
+    <QtDeploy>false</QtDeploy>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.8.0_msvc2022_64</QtInstall>
     <QtModules>core;gui;qml;quick;quickcontrols2;quicklayouts</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
     <QtQMLDebugEnable>true</QtQMLDebugEnable>
+    <QtDeploy>true</QtDeploy>
+    <QtDeployCopyFiles>true</QtDeployCopyFiles>
+    <QtDeployDir>$(SolutionDir)deploy\</QtDeployDir>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
     <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
@@ -62,11 +67,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)bin\HardwareMonitor\$(Configuration)\</OutDir>
     <IntDir>obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)bin\HardwareMonitor\$(Configuration)\</OutDir>
     <IntDir>obj\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -75,20 +80,35 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>HardwareMonitorLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\HardwareMonitorLib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ManifestFile>$(IntDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(SolutionDir)bin\HardwareMonitorLib\$(Configuration)\HardwareMonitorLib.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)bin\HardwareMonitorLib\$(Configuration)\HidSharp.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)bin\HardwareMonitorLib\$(Configuration)\LibreHardwareMonitorLib.dll" "$(OutDir)"
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>..\HardwareMonitorLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <AdditionalDependencies>HardwareMonitorLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\bin\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\bin\HardwareMonitorLib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(SolutionDir)bin\HardwareMonitorLib\$(Configuration)\HardwareMonitorLib.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)bin\HardwareMonitorLib\$(Configuration)\HidSharp.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)bin\HardwareMonitorLib\$(Configuration)\LibreHardwareMonitorLib.dll" "$(OutDir)"
+xcopy /y /d "$(OutDir)HardwareMonitorLib.dll" "$(SolutionDir)deploy"
+xcopy /y /d "$(OutDir)HidSharp.dll" "$(SolutionDir)deploy"
+xcopy /y /d "$(OutDir)LibreHardwareMonitorLib.dll" "$(SolutionDir)deploy"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>

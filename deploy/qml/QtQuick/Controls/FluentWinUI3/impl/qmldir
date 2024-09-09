@@ -1,0 +1,8 @@
+module QtQuick.Controls.FluentWinUI3.impl
+linktarget Qt6::qtquickcontrols2fluentwinui3styleimplplugin
+optional plugin qtquickcontrols2fluentwinui3styleimplplugin
+classname QtQuickControls2FluentWinUI3StyleImplPlugin
+typeinfo plugins.qmltypes
+depends QtQuick auto
+prefer :/qt-project.org/imports/QtQuick/Controls/FluentWinUI3/impl/
+
