@@ -30,11 +30,11 @@ public:
    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
    QHash<int, QByteArray> roleNames() const override;
 public slots:
-   void updateItems(std::shared_ptr<Hardware> rootItem);
+   void updateModel(std::shared_ptr<Hardware> rootItem);
 
 private:
    Hardware* getItem(const QModelIndex& index) const;
-   void updateNode(std::shared_ptr<Hardware> currentNode, std::shared_ptr<Hardware> newNode);
+   void updateItems(std::shared_ptr<Hardware> currentNode, std::shared_ptr<Hardware> newNode);
    std::shared_ptr<Hardware> m_rootItem;
 
 };

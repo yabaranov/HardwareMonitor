@@ -1,37 +1,53 @@
 #include "HardwareUtils.h"
 #include <map>
-std::shared_ptr<Hardware> ConvertHardware(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_ptr<Hardware> parent)
+
+std::shared_ptr<Hardware> convertHardware(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_ptr<Hardware> parent)
 {
    auto hardware = std::make_shared<Hardware>(msclr::interop::marshal_as<std::wstring>(hw->Name));
    hardware->parent = parent;
 
    for each (LibreHardwareMonitor::Hardware::IHardware ^ subHardware in hw->SubHardware)
    {
-      hardware->children.push_back(ConvertHardware(subHardware, hardware));
+      hardware->children.push_back(convertHardware(subHardware, hardware));
    }
 
-   std::map<std::wstring, std::vector<Sensor>> sensors;
+   populateSensors(hw, hardware);
+
+   return hardware;
+}
+
+void populateSensors(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_ptr<Hardware> parent)
+{
+   std::map<std::wstring, std::vector<Hardware>> hardwareMap;
 
    for each (LibreHardwareMonitor::Hardware::ISensor ^ sr in hw->Sensors)
    {
-      Sensor sensor;
-      sensor.name = msclr::interop::marshal_as<std::wstring>(sr->Name);
-      sensor.value = sr->Value.HasValue ? std::to_wstring( sr->Value.Value) : L"-";
-      sensor.min = sr->Min.HasValue ? std::to_wstring(sr->Min.Value) : L"-";
-      sensor.max = sr->Max.HasValue ? std::to_wstring(sr->Max.Value) : L"-";
+      auto hardware = convertSensor(sr);
 
-      sensors[msclr::interop::marshal_as<std::wstring>(sr->SensorType.ToString())].push_back(sensor);
+      hardwareMap[msclr::interop::marshal_as<std::wstring>(sr->SensorType.ToString())].push_back(hardware);
    }
 
-   for (auto& sensorGroup : sensors)
+   for (auto& hardwareList : hardwareMap)
    {
-      hardware->children.push_back(std::make_shared<Hardware>(sensorGroup.first, hardware, Sensor(), std::vector<std::shared_ptr<Hardware>>()));
+      parent->children.push_back(std::make_shared<Hardware>(hardwareList.first, parent));
 
-      for (auto& sensor : sensorGroup.second)
+      for (auto& hardware : hardwareList.second)
       {
-         hardware->children.back()->children.push_back(std::make_shared<Hardware>(sensor.name, hardware->children.back(), sensor, std::vector<std::shared_ptr<Hardware>>()));
+         auto lastChild = parent->children.back();
+
+         lastChild->children.push_back(std::make_shared<Hardware>(hardware.name, lastChild, hardware.values));
       }
    }
+}
+
+Hardware convertSensor(LibreHardwareMonitor::Hardware::ISensor^ sr)
+{
+   Hardware hardware;
+
+   hardware.name = msclr::interop::marshal_as<std::wstring>(sr->Name);
+   hardware.values.push_back(sr->Value.HasValue ? std::optional<float>(sr->Value.Value) : std::nullopt);
+   hardware.values.push_back(sr->Min.HasValue ? std::optional<float>(sr->Min.Value) : std::nullopt);
+   hardware.values.push_back(sr->Max.HasValue ? std::optional<float>(sr->Max.Value) : std::nullopt);
 
    return hardware;
 }

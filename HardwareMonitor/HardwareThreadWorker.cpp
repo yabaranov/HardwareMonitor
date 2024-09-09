@@ -3,8 +3,8 @@
 
 void HardwareThreadWorker::process()
 {
-   SystemMonitorWrapper systemMonitorWrapper;
-   auto rootItem = systemMonitorWrapper.GetHardwareData();
+   HardwareMonitorLib hardwareMonitorLib;
+   auto rootItem = hardwareMonitorLib.getHardwareData();
    emit sensorDataUpdated(rootItem);
 }
 

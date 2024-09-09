@@ -4,8 +4,8 @@
 #include "HardwareThreadWorker.h"
 TreeViewController::TreeViewController(QObject* parent) : QObject(parent)
 {
-   SystemMonitorWrapper systemMonitorWrapper;
-   m_hardwareTreeModel = std::make_unique<HardwareTreeModel>(systemMonitorWrapper.GetHardwareData());
+   HardwareMonitorLib hardwareMonitorLib;
+   m_hardwareTreeModel = std::make_unique<HardwareTreeModel>(hardwareMonitorLib.getHardwareData());
 }
 
 void TreeViewController::makeHardwareThread()
@@ -19,7 +19,7 @@ void TreeViewController::makeHardwareThread()
 
    connect(thread, &QThread::started, worker, &HardwareThreadWorker::process);
 
-   connect(worker, &HardwareThreadWorker::sensorDataUpdated, m_hardwareTreeModel.get(), &HardwareTreeModel::updateItems);
+   connect(worker, &HardwareThreadWorker::sensorDataUpdated, m_hardwareTreeModel.get(), &HardwareTreeModel::updateModel);
 
    connect(&m_timer, &QTimer::timeout, worker, &HardwareThreadWorker::process);
    m_timer.start(1000);

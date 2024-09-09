@@ -29,7 +29,7 @@ QModelIndex HardwareTreeModel::parent(const QModelIndex& index) const
       return QModelIndex();
    }
 
-   return createIndex(parentPtr.get()->position(), 0, parentPtr.get());
+   return createIndex(parentPtr.get()->indexInParent(), 0, parentPtr.get());
 }
 
 int HardwareTreeModel::rowCount(const QModelIndex& parent) const
@@ -54,14 +54,22 @@ QVariant HardwareTreeModel::data(const QModelIndex& index, int role) const {
    {
       role = Qt::UserRole + index.column();
    }
-   switch (role) 
-   {
-      case NameRole: return QString::fromStdWString(item->name);
-      case ValueRole: return QString::fromStdWString(item->sensor.value);
-      case MinRole: return QString::fromStdWString(item->sensor.min);
-      case MaxRole: return QString::fromStdWString(item->sensor.max);
-      default: break;
-   }
+
+   if (item->children.empty())
+      switch (role)
+      {
+         case NameRole: return QString::fromStdWString(item->name);
+         case ValueRole: case MinRole: case MaxRole: return item->values[index.column() - 1].has_value() ? QString::number(*item->values[index.column() - 1], 'f', 3) : "-";
+         default: break;
+      }
+   else
+      switch (role)
+      {
+         case NameRole: return QString::fromStdWString(item->name);
+         case ValueRole: case MinRole: case MaxRole: return "";
+         default: break;
+      }
+
    return QVariant();
 }
 
@@ -84,41 +92,29 @@ Hardware* HardwareTreeModel::getItem(const QModelIndex& index) const
    return m_rootItem.get();
 }
 
-void HardwareTreeModel::updateNode(std::shared_ptr<Hardware> currentNode, std::shared_ptr<Hardware> newNode)
+void HardwareTreeModel::updateItems(std::shared_ptr<Hardware> currentNode, std::shared_ptr<Hardware> newNode)
 {
-   if (currentNode->sensor.value != newNode->sensor.value)
+   if (!currentNode->values.empty())
    {
-      QModelIndex index = createIndex(currentNode->position(), 1, currentNode.get());
-      currentNode->sensor.value = newNode->sensor.value;
-      emit dataChanged(index, index);
+      for (size_t i = 0; i < currentNode->values.size(); i++)
+      {
+         if (currentNode->values[i] != newNode->values[i])
+         {
+            QModelIndex index = createIndex(currentNode->indexInParent(), i + 1, currentNode.get());
+            currentNode->values[i] = newNode->values[i];
+            emit dataChanged(index, index);
+         }
+      }
    }
-
-   if (currentNode->sensor.min != newNode->sensor.min)
+      
+   for (size_t i = 0; i < currentNode->children.size(); ++i) 
    {
-      QModelIndex index = createIndex(currentNode->position(), 2, currentNode.get());
-      currentNode->sensor.min = newNode->sensor.min;
-      emit dataChanged(index, index);
-   }
-
-   if (currentNode->sensor.max != newNode->sensor.max)
-   {
-      QModelIndex index = createIndex(currentNode->position(), 3, currentNode.get());
-      currentNode->sensor.max = newNode->sensor.max;
-      emit dataChanged(index, index);
-   }
-
-   // Рекурсивно обходим дочерние узлы
-   for (size_t i = 0; i < currentNode->children.size(); ++i) {
-      updateNode(currentNode->children[i], newNode->children[i]);
+      updateItems(currentNode->children[i], newNode->children[i]);
    }
 }
 
-void HardwareTreeModel::updateItems(std::shared_ptr<Hardware> rootItem)
+void HardwareTreeModel::updateModel(std::shared_ptr<Hardware> rootItem)
 {
-   /*beginResetModel();
-   m_rootItem = rootItem;
-   endResetModel();*/
-
-   updateNode(m_rootItem, rootItem);
+   updateItems(m_rootItem, rootItem);
 }
 

@@ -14,14 +14,12 @@
 class ComputerWrapper;
 class UpdateVisitorWrapper;
 
-class DLL_EXPORT SystemMonitorWrapper
+class DLL_EXPORT HardwareMonitorLib
 {
 public:
-
-   SystemMonitorWrapper();
-   ~SystemMonitorWrapper();
-
-   std::shared_ptr<Hardware> GetHardwareData();
+   HardwareMonitorLib();
+   ~HardwareMonitorLib();
+   std::shared_ptr<Hardware> getHardwareData();
 
 private:
    std::unique_ptr<ComputerWrapper> m_computer;
