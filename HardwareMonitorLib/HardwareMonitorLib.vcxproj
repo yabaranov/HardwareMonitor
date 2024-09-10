@@ -122,14 +122,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Reference Include="HidSharp">
-      <HintPath>..\External\LibreHardwareMonitorLib\bin\Release\net472\HidSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="LibreHardwareMonitorLib">
-      <HintPath>..\External\LibreHardwareMonitorLib\bin\Release\net472\LibreHardwareMonitorLib.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="HardwareMonitorLib.cpp" />
     <ClCompile Include="LibreHardwareMonitorLib\HardwareUtils\HardwareUtils.cpp" />
     <ClCompile Include="LibreHardwareMonitorLib\UpdateVisitor\UpdateVisitor.cpp" />
@@ -141,6 +133,14 @@
     <ClInclude Include="LibreHardwareMonitorLib\HardwareUtils\HardwareUtils.h" />
     <ClInclude Include="LibreHardwareMonitorLib\UpdateVisitor\UpdateVisitor.h" />
     <ClInclude Include="LibreHardwareMonitorLib\UpdateVisitor\UpdateVisitorWrapper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="HidSharp">
+      <HintPath>..\External\LibreHardwareMonitorLib\bin\Release\net472\HidSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LibreHardwareMonitorLib">
+      <HintPath>..\External\LibreHardwareMonitorLib\bin\Release\net472\LibreHardwareMonitorLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

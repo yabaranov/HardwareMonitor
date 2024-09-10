@@ -5,6 +5,7 @@
 
 class HardwareThreadWorker : public QObject {
    Q_OBJECT
+   HardwareMonitorLib m_hardwareMonitorLib;
 
 public slots:
    void process();

@@ -1,5 +1,6 @@
 #include "HardwareTreeModel.h"
-
+#include "SensorFormatter.h"
+#include <format>
 
 HardwareTreeModel::HardwareTreeModel(std::shared_ptr<Hardware> rootItem, QObject* parent) : QAbstractItemModel(parent), m_rootItem(rootItem)
 { 
@@ -44,7 +45,8 @@ int HardwareTreeModel::columnCount(const QModelIndex& parent) const
    return 4;
 }
 
-QVariant HardwareTreeModel::data(const QModelIndex& index, int role) const {
+QVariant HardwareTreeModel::data(const QModelIndex& index, int role) const 
+{
    if (!index.isValid())
       return QVariant();
 
@@ -58,14 +60,19 @@ QVariant HardwareTreeModel::data(const QModelIndex& index, int role) const {
    if (item->children.empty())
       switch (role)
       {
-         case NameRole: return QString::fromStdWString(item->name);
-         case ValueRole: case MinRole: case MaxRole: return item->values[index.column() - 1].has_value() ? QString::number(*item->values[index.column() - 1], 'f', 3) : "-";
+      case NameRole: return QString::fromStdWString(item->name);
+         case ValueRole: case MinRole: case MaxRole: 
+         {
+            auto parentName = item->parent.lock()->name;
+            auto value = item->values[index.column() - 1];
+            return value.has_value() ? QString::fromStdWString(std::vformat(SensorFormatter::getFormat(parentName), std::make_wformat_args(*value))) : "-";
+         }          
          default: break;
       }
    else
       switch (role)
       {
-         case NameRole: return QString::fromStdWString(item->name);
+      case NameRole: return QString::fromStdWString(item->name);
          case ValueRole: case MinRole: case MaxRole: return "";
          default: break;
       }
@@ -73,12 +80,13 @@ QVariant HardwareTreeModel::data(const QModelIndex& index, int role) const {
    return QVariant();
 }
 
-QHash<int, QByteArray> HardwareTreeModel::roleNames() const {
+QHash<int, QByteArray> HardwareTreeModel::roleNames() const 
+{
    QHash<int, QByteArray> names = QAbstractItemModel::roleNames();
-   names[NameRole] = "name";
+   names[NameRole] =  "name";
    names[ValueRole] = "valueRole";
-   names[MinRole] = "minRole";
-   names[MaxRole] = "maxRole";
+   names[MinRole] =   "minRole";
+   names[MaxRole] =   "maxRole";
 
    return names;
 }

@@ -18,7 +18,7 @@ Window
         anchors.top: parent.top
         syncView: treeView
         model: ["Sensor", "Value", "Min", "Max"]
-    }
+   }
 
    TreeView 
    {

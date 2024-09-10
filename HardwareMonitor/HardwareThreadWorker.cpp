@@ -3,8 +3,7 @@
 
 void HardwareThreadWorker::process()
 {
-   HardwareMonitorLib hardwareMonitorLib;
-   auto rootItem = hardwareMonitorLib.getHardwareData();
+   auto rootItem = m_hardwareMonitorLib.getHardwareData();
    emit sensorDataUpdated(rootItem);
 }
 
