@@ -1,9 +1,9 @@
-#include "HardwareUtils.h"
+#include "HardwareConversion.h"
 #include <map>
 
 std::shared_ptr<Hardware> convertHardware(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_ptr<Hardware> parent)
 {
-   auto hardware = std::make_shared<Hardware>(msclr::interop::marshal_as<std::wstring>(hw->Name));
+   auto hardware = std::make_shared<Hardware>(msclr::interop::marshal_as<std::wstring>(hw->Name), msclr::interop::marshal_as<std::wstring>(hw->HardwareType.ToString()));
    hardware->parent = parent;
 
    for each (LibreHardwareMonitor::Hardware::IHardware ^ subHardware in hw->SubHardware)
@@ -29,13 +29,13 @@ void populateSensors(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_
 
    for (auto& hardwareList : hardwareMap)
    {
-      parent->children.push_back(std::make_shared<Hardware>(hardwareList.first, parent));
+      parent->children.push_back(std::make_shared<Hardware>(hardwareList.first, hardwareList.first, parent));
 
       for (auto& hardware : hardwareList.second)
       {
          auto lastChild = parent->children.back();
 
-         lastChild->children.push_back(std::make_shared<Hardware>(hardware.name, lastChild, hardware.values));
+         lastChild->children.push_back(std::make_shared<Hardware>(hardware.name, hardware.type, lastChild, hardware.values));
       }
    }
 }

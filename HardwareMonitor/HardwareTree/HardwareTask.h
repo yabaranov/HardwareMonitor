@@ -1,11 +1,12 @@
 #pragma once
 #include <QObject>
 #include <QTimer>
-#include "HardwareMonitorLib.h"
+#include "HardwareDataExtractor.h"
 
-class HardwareThreadWorker : public QObject {
+class HardwareTask : public QObject 
+{
    Q_OBJECT
-   HardwareMonitorLib m_hardwareMonitorLib;
+   HardwareDataExtractor m_hardwareDataExtractor;
 
 public slots:
    void process();

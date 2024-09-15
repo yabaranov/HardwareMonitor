@@ -26,42 +26,58 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <QtRcc Include="qml.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
-    <None Include="main.qml">
-      <Filter>Source Files</Filter>
-    </None>
-    <ClCompile Include="HardwareTreeModel.cpp">
+    <ClCompile Include="HardwareTree\HardwareTreeModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HardwareThreadWorker.cpp">
+    <ClCompile Include="HardwareTree\HardwareTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TreeViewController.cpp">
+    <ClCompile Include="HardwareTree\HardwareTreeController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SensorFormatter.cpp">
+    <ClCompile Include="DataMappers\SensorFormatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataMappers\IconRegistry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="HardwareMonitor.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="HardwareTreeModel.h">
+    <QtMoc Include="HardwareTree\HardwareTreeModel.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="HardwareThreadWorker.h">
+    <QtMoc Include="HardwareTree\HardwareTask.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="TreeViewController.h">
+    <QtMoc Include="HardwareTree\HardwareTreeController.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SensorFormatter.h">
+    <ClInclude Include="DataMappers\SensorFormatter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DataMappers\IconRegistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="Resources\HardwareMonitor.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Qml\main.qml">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Qml\HardwareTreeView.qml">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Qml\TreeConnector.qml">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="res.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
   </ItemGroup>
 </Project>

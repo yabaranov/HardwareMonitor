@@ -1,19 +1,21 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "TreeViewController.h"
+#include <QIcon>
+#include "HardwareTree/HardwareTreeController.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+    app.setWindowIcon(QIcon(":/Resources/Images/icon.png"));
+
     QQmlApplicationEngine engine;
 
-    TreeViewController treeViewController;
-    treeViewController.makeHardwareThread();
-
-    engine.rootContext()->setContextProperty("treeViewController", &treeViewController);
-
-    engine.load(QUrl(QStringLiteral("qrc:/qml/hardwareMonitor/main.qml")));
+    HardwareTreeController hardwareTreeController;
+    hardwareTreeController.makeHardwareThread();
+  
+    engine.rootContext()->setContextProperty("hardwareTreeController", &hardwareTreeController);
+    engine.load(QUrl(QStringLiteral("qrc:/Qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 

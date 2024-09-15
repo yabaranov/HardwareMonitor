@@ -122,17 +122,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HardwareMonitorLib.cpp" />
-    <ClCompile Include="LibreHardwareMonitorLib\HardwareUtils\HardwareUtils.cpp" />
-    <ClCompile Include="LibreHardwareMonitorLib\UpdateVisitor\UpdateVisitor.cpp" />
+    <ClCompile Include="HardwareDataExtractor.cpp" />
+    <ClCompile Include="HardwareConversion.cpp" />
+    <ClCompile Include="UpdateVisitor\UpdateVisitor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LibreHardwareMonitorLib\ComputerWrapper.h" />
+    <ClInclude Include="ComputerWrapper.h" />
     <ClInclude Include="HardwareData.h" />
-    <ClInclude Include="HardwareMonitorLib.h" />
-    <ClInclude Include="LibreHardwareMonitorLib\HardwareUtils\HardwareUtils.h" />
-    <ClInclude Include="LibreHardwareMonitorLib\UpdateVisitor\UpdateVisitor.h" />
-    <ClInclude Include="LibreHardwareMonitorLib\UpdateVisitor\UpdateVisitorWrapper.h" />
+    <ClInclude Include="HardwareDataExtractor.h" />
+    <ClInclude Include="HardwareConversion.h" />
+    <ClInclude Include="UpdateVisitor\UpdateVisitor.h" />
+    <ClInclude Include="UpdateVisitor\UpdateVisitorWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="HidSharp">

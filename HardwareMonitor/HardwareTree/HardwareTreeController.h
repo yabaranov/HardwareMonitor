@@ -4,12 +4,12 @@
 #include <memory>
 #include "HardwareTreeModel.h"
 
-class TreeViewController : public QObject
+class HardwareTreeController : public QObject
 {
 	Q_OBJECT
 
 public:
-	TreeViewController(QObject* parent = nullptr);
+	HardwareTreeController(QObject* parent = nullptr);
 public:
 	void makeHardwareThread();
 	Q_INVOKABLE QAbstractItemModel* getHardwareTreeModel();

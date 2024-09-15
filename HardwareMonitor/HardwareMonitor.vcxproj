@@ -97,6 +97,7 @@ xcopy /y /d "$(SolutionDir)bin\HardwareMonitorLib\$(Configuration)\LibreHardware
       <AdditionalIncludeDirectories>..\HardwareMonitorLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>HardwareMonitorLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -141,19 +142,15 @@ xcopy /y /d "$(OutDir)LibreHardwareMonitorLib.dll" "$(SolutionDir)deploy"</Comma
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SensorFormatter.cpp" />
-    <ClCompile Include="TreeViewController.cpp" />
-    <ClCompile Include="HardwareTreeModel.cpp" />
+    <ClCompile Include="DataMappers\IconRegistry.cpp" />
+    <ClCompile Include="DataMappers\SensorFormatter.cpp" />
+    <ClCompile Include="HardwareTree\HardwareTreeController.cpp" />
+    <ClCompile Include="HardwareTree\HardwareTreeModel.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="HardwareThreadWorker.cpp" />
-    <QtRcc Include="qml.qrc" />
-    <None Include="main.qml" />
+    <ClCompile Include="HardwareTree\HardwareTask.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="HardwareMonitor.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="HardwareTreeModel.h" />
+    <QtMoc Include="HardwareTree\HardwareTreeModel.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HardwareMonitorLib\HardwareMonitorLib.vcxproj">
@@ -161,13 +158,25 @@ xcopy /y /d "$(OutDir)LibreHardwareMonitorLib.dll" "$(SolutionDir)deploy"</Comma
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="HardwareThreadWorker.h" />
+    <QtMoc Include="HardwareTree\HardwareTask.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="TreeViewController.h" />
+    <QtMoc Include="HardwareTree\HardwareTreeController.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SensorFormatter.h" />
+    <ClInclude Include="DataMappers\IconRegistry.h" />
+    <ClInclude Include="DataMappers\SensorFormatter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="Resources\HardwareMonitor.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Qml\main.qml" />
+    <None Include="Qml\HardwareTreeView.qml" />
+    <None Include="Qml\TreeConnector.qml" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="res.qrc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

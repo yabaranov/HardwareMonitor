@@ -1,9 +1,9 @@
-#include "HardwareMonitorLib.h"
-#include "LibreHardwareMonitorLib/ComputerWrapper.h"
-#include "LibreHardwareMonitorLib/UpdateVisitor/UpdateVisitorWrapper.h"
-#include "LibreHardwareMonitorLib/HardwareUtils/HardwareUtils.h"
+#include "HardwareDataExtractor.h"
+#include "ComputerWrapper.h"
+#include "UpdateVisitor/UpdateVisitorWrapper.h"
+#include "HardwareConversion.h"
 
-HardwareMonitorLib::HardwareMonitorLib() : m_computer(std::make_unique<ComputerWrapper>()), m_updateVisitor(std::make_unique<UpdateVisitorWrapper>())
+HardwareDataExtractor::HardwareDataExtractor() : m_computer(std::make_unique<ComputerWrapper>()), m_updateVisitor(std::make_unique<UpdateVisitorWrapper>())
 {
    m_updateVisitor->API = gcnew UpdateVisitor();
 
@@ -18,15 +18,15 @@ HardwareMonitorLib::HardwareMonitorLib() : m_computer(std::make_unique<ComputerW
    m_computer->API->Open();
 }
 
-HardwareMonitorLib::~HardwareMonitorLib() 
+HardwareDataExtractor::~HardwareDataExtractor() 
 {
    m_computer->API->Close();
 }
 
-std::shared_ptr<Hardware> HardwareMonitorLib::getHardwareData() 
+std::shared_ptr<Hardware> HardwareDataExtractor::getHardwareData() 
 {
    m_computer->API->Accept(m_updateVisitor->API.get());
-   auto hardwareRoot = std::make_shared<Hardware>(L"RootItem");
+   auto hardwareRoot = std::make_shared<Hardware>();
 
    for each (LibreHardwareMonitor::Hardware::IHardware ^ hw in m_computer->API->Hardware) 
    {

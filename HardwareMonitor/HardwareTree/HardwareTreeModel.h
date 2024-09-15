@@ -16,7 +16,8 @@ private:
       NameRole = Qt::UserRole,
       ValueRole,
       MinRole, 
-      MaxRole
+      MaxRole,
+      IconRole
    };
 
 public:
@@ -37,5 +38,4 @@ private:
    Hardware* getItem(const QModelIndex& index) const;
    void updateItems(std::shared_ptr<Hardware> currentNode, std::shared_ptr<Hardware> newNode);
    std::shared_ptr<Hardware> m_rootItem;
-
 };

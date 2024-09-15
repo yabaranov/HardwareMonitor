@@ -1,9 +1,11 @@
 #include "HardwareTreeModel.h"
-#include "SensorFormatter.h"
+#include "../DataMappers/SensorFormatter.h"
+#include "../DataMappers/IconRegistry.h"
+
 #include <format>
 
 HardwareTreeModel::HardwareTreeModel(std::shared_ptr<Hardware> rootItem, QObject* parent) : QAbstractItemModel(parent), m_rootItem(rootItem)
-{ 
+{  
 }
 
 QModelIndex HardwareTreeModel::index(int row, int column, const QModelIndex& parent) const
@@ -66,7 +68,8 @@ QVariant HardwareTreeModel::data(const QModelIndex& index, int role) const
             auto parentName = item->parent.lock()->name;
             auto value = item->values[index.column() - 1];
             return value.has_value() ? QString::fromStdWString(std::vformat(SensorFormatter::getFormat(parentName), std::make_wformat_args(*value))) : "-";
-         }          
+         }   
+         case IconRole: return QString::fromStdWString(IconRegistry::getIconPath(L"Unknown").data());
          default: break;
       }
    else
@@ -74,6 +77,8 @@ QVariant HardwareTreeModel::data(const QModelIndex& index, int role) const
       {
       case NameRole: return QString::fromStdWString(item->name);
          case ValueRole: case MinRole: case MaxRole: return "";
+         case IconRole: return QString::fromStdWString(IconRegistry::getIconPath(item->type).data());
+
          default: break;
       }
 
@@ -84,9 +89,10 @@ QHash<int, QByteArray> HardwareTreeModel::roleNames() const
 {
    QHash<int, QByteArray> names = QAbstractItemModel::roleNames();
    names[NameRole] =  "name";
-   names[ValueRole] = "valueRole";
-   names[MinRole] =   "minRole";
-   names[MaxRole] =   "maxRole";
+   names[ValueRole] = "value";
+   names[MinRole] =   "min";
+   names[MaxRole] =   "max";
+   names[IconRole] =  "icon";
 
    return names;
 }

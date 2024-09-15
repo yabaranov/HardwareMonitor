@@ -14,11 +14,11 @@
 class ComputerWrapper;
 class UpdateVisitorWrapper;
 
-class DLL_EXPORT HardwareMonitorLib
+class DLL_EXPORT HardwareDataExtractor
 {
 public:
-   HardwareMonitorLib();
-   ~HardwareMonitorLib();
+   HardwareDataExtractor();
+   ~HardwareDataExtractor();
    std::shared_ptr<Hardware> getHardwareData();
 
 private:
