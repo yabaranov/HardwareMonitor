@@ -3,6 +3,7 @@
         <file>Qml/main.qml</file>
 		<file>Qml/HardwareTreeView.qml</file>
 		<file>Qml/TreeConnector.qml</file>
+		<file>Qml/CustomScrollBar.qml</file>
         <file>Resources/Images/off.png</file>
         <file>Resources/Images/on.png</file>
         <file>Resources/Images/amd.png</file>

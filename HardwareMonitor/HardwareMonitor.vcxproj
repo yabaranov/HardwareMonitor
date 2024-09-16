@@ -173,6 +173,7 @@ xcopy /y /d "$(OutDir)LibreHardwareMonitorLib.dll" "$(SolutionDir)deploy"</Comma
   <ItemGroup>
     <None Include="Qml\main.qml" />
     <None Include="Qml\HardwareTreeView.qml" />
+    <None Include="Qml\CustomScrollBar.qml" />
     <None Include="Qml\TreeConnector.qml" />
   </ItemGroup>
   <ItemGroup>

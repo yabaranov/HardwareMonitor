@@ -74,6 +74,9 @@
     <None Include="Qml\TreeConnector.qml">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Qml\CustomScrollBar.qml">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="res.qrc">

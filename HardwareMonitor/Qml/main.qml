@@ -8,31 +8,30 @@ Window {
    title: qsTr("Hardware monitor")
    
    property var treeModel: hardwareTreeController.getHardwareTreeModel()
+   Column {
+      anchors.fill: parent
+      anchors.leftMargin: 10
 
-   HorizontalHeaderView {
-      id: header
-      anchors.left: treeView.left
-      anchors.right: parent.right
-      anchors.top: parent.top
-      syncView: treeView
-      model: ["Sensor", "Value", "Min", "Max"]     
-      delegate: Item {  
-      implicitHeight: 50
-         Label {
-            anchors.fill: parent
-            text: modelData
-            horizontalAlignment: Text.AlignLeft
-            verticalAlignment: Text.AlignVCenter
+      HorizontalHeaderView {
+         id: header
+         width: parent.width
+         syncView: treeView
+         model: ["Sensor", "Value", "Min", "Max"]     
+         delegate: Item {  
+         implicitHeight: 50
+            Label {
+               anchors.fill: parent
+               text: modelData
+               horizontalAlignment: Text.AlignLeft
+               verticalAlignment: Text.AlignVCenter
+            }
          }
       }
-   }
 
-   HardwareTreeView {
-      id: treeView        
-      anchors.left: parent.left
-      anchors.top: header.bottom
-      anchors.right: parent.right
-      anchors.bottom: parent.bottom
-      anchors.margins: 10
-   }  
+      HardwareTreeView {
+         id: treeView        
+         width: parent.width
+         height: parent.height - header.implicitHeight         
+      }  
+}
 }

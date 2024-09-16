@@ -86,4 +86,12 @@ TreeView {
    Component.onCompleted: {
       treeView.expandRecursively()
    }
+
+   ScrollBar.vertical: CustomScrollBar {
+      policy: ScrollBar.AlwaysOn
+   }
+
+   ScrollBar.horizontal: CustomScrollBar {
+      policy: ScrollBar.AsNeeded
+   }
 }
