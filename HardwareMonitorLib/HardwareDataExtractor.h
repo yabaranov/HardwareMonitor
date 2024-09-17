@@ -6,13 +6,13 @@
 #define DLL_EXPORT __declspec(dllimport)
 #endif
 
-#include "HardwareData.h"
+#include "Hardware.h"
 
 #include <vector>
 #include <memory>
 
-class ComputerWrapper;
-class UpdateVisitorWrapper;
+struct ComputerWrapper;
+struct UpdateVisitorWrapper;
 
 class DLL_EXPORT HardwareDataExtractor
 {

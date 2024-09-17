@@ -2,8 +2,6 @@
 #include "../DataMappers/SensorFormatter.h"
 #include "../DataMappers/IconRegistry.h"
 
-#include <format>
-
 HardwareTreeModel::HardwareTreeModel(std::shared_ptr<Hardware> rootItem, QObject* parent) : QAbstractItemModel(parent), m_rootItem(rootItem)
 {  
 }
@@ -58,30 +56,23 @@ QVariant HardwareTreeModel::data(const QModelIndex& index, int role) const
    {
       role = Qt::UserRole + index.column();
    }
-
-   if (item->children.empty())
-      switch (role)
-      {
+ 
+   switch (role)
+   {
       case NameRole: return QString::fromStdWString(item->name);
-         case ValueRole: case MinRole: case MaxRole: 
+      case ValueRole: case MinRole: case MaxRole: 
+         if (item->children.empty())
          {
-            auto parentName = item->parent.lock()->name;
+            auto parentType = item->parent.lock()->type;
             auto value = item->values[index.column() - 1];
-            return value.has_value() ? QString::fromStdWString(std::vformat(SensorFormatter::getFormat(parentName), std::make_wformat_args(*value))) : "-";
+            auto format = SensorFormatter::getFormat(parentType);
+            return value.has_value() ? format.first.arg(*value, 0, 'f', format.second) : "-";
          }   
-         case IconRole: return QString::fromStdWString(IconRegistry::getIconPath(L"Unknown").data());
-         default: break;
-      }
-   else
-      switch (role)
-      {
-      case NameRole: return QString::fromStdWString(item->name);
-         case ValueRole: case MinRole: case MaxRole: return "";
-         case IconRole: return QString::fromStdWString(IconRegistry::getIconPath(item->type).data());
-
-         default: break;
-      }
-
+         else
+            return "";
+      case IconRole: return IconRegistry::getIconPath(item->type);
+      default: break;
+   }
    return QVariant();
 }
 

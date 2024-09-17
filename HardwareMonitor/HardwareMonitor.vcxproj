@@ -78,6 +78,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\HardwareMonitorLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>HardwareMonitorLib.lib;%(AdditionalDependencies)</AdditionalDependencies>

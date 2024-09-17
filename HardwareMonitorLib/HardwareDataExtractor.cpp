@@ -26,7 +26,7 @@ HardwareDataExtractor::~HardwareDataExtractor()
 std::shared_ptr<Hardware> HardwareDataExtractor::getHardwareData() 
 {
    m_computer->API->Accept(m_updateVisitor->API.get());
-   auto hardwareRoot = std::make_shared<Hardware>();
+   auto hardwareRoot = std::make_shared<Hardware>(L"", HardwareType::Unknown);
 
    for each (LibreHardwareMonitor::Hardware::IHardware ^ hw in m_computer->API->Hardware) 
    {

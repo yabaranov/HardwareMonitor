@@ -1,13 +1,15 @@
 #pragma once
 
+#include "HardwareType.h"
+
 #include <unordered_map>
-#include <string>
+#include <QString>
 
 class IconRegistry
 {
 public:
-   static std::wstring_view getIconPath(std::wstring_view sensorName);
+   static const QString& getIconPath(HardwareType hardwareType);
 
 private:
-   static const std::unordered_map<std::wstring, std::wstring> m_iconPaths;
+   static const std::unordered_map<HardwareType, QString> m_iconPaths;
 };

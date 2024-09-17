@@ -8,6 +8,7 @@ Window {
    title: qsTr("Hardware monitor")
    
    property var treeModel: hardwareTreeController.getHardwareTreeModel()
+
    Column {
       anchors.fill: parent
       anchors.leftMargin: 10
@@ -18,6 +19,7 @@ Window {
          syncView: treeView
          model: ["Sensor", "Value", "Min", "Max"]     
          delegate: Item {  
+         implicitWidth: 80
          implicitHeight: 50
             Label {
                anchors.fill: parent

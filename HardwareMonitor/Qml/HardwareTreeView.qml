@@ -11,7 +11,7 @@ TreeView {
          const columnCount = treeModel.columnCount()  
          const minSensorColumnWidth = 200
          const fixedColumnWidth = 80
-
+   
          if (index === 0) {
              const availableWidth = totalWidth - (fixedColumnWidth * (columnCount - 1));
              return Math.max(minSensorColumnWidth, availableWidth);

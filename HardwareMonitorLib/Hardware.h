@@ -6,11 +6,13 @@
 #include <algorithm>
 #include <optional>
 
+#include "HardwareType.h"
+
 struct Hardware 
 {
    std::wstring name;
    std::weak_ptr<Hardware> parent;
-   std::wstring type;
+   HardwareType type;
    std::vector<std::optional<float>> values;
    std::vector<std::shared_ptr<Hardware>> children;
 
@@ -31,7 +33,7 @@ struct Hardware
       return -1;
    }
 
-   Hardware(const std::wstring& name = {}, const std::wstring& type = {}, std::shared_ptr<Hardware> parent = nullptr,
+   Hardware(const std::wstring& name = {}, HardwareType type = {}, std::shared_ptr<Hardware> parent = nullptr,
       const std::vector<std::optional<float>>& values = {},
       const std::vector<std::shared_ptr<Hardware>>& children = {}) :
       name(name), type(type), parent(parent), values(values), children(children) {}

@@ -1,12 +1,15 @@
 #pragma once
+
+#include "HardwareType.h"
+
 #include <unordered_map>
-#include <string>
+#include <QString>
 
 class SensorFormatter
 {
 public:
-   static std::wstring_view getFormat(std::wstring_view sensorName);
+   static const std::pair<QString, int>& getFormat(HardwareType hardwareType);
 
 private:
-   static const std::unordered_map<std::wstring, std::wstring> m_formats;
+   static const std::unordered_map<HardwareType, std::pair<QString, int>> m_formats;
 };
