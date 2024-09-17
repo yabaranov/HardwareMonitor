@@ -172,6 +172,7 @@ xcopy /y /d "$(OutDir)LibreHardwareMonitorLib.dll" "$(SolutionDir)deploy"</Comma
     <Manifest Include="Resources\HardwareMonitor.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Qml\HardwareTreeDelegate.qml" />
     <None Include="Qml\main.qml" />
     <None Include="Qml\HardwareTreeView.qml" />
     <None Include="Qml\CustomScrollBar.qml" />

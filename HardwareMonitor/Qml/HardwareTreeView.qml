@@ -20,67 +20,13 @@ TreeView {
          }  
       }
 
-   delegate: Item {
-      id: treeItemDelegate
-                                   
-      required property TreeView treeView              
-      required property bool isTreeNode               
-      required property bool expanded              
-      required property int hasChildren                
-      required property int depth
+   readonly property string src: "qrc:/Resources/Images/"
+   readonly property string on: "on.png"
+   readonly property string off: "off.png"
+   readonly property real indent: 20
+   readonly property real padding: 5 
 
-      readonly property real indent: 20
-      readonly property real padding: 5  
-
-      implicitWidth: padding + label.x + label.implicitWidth + padding
-      implicitHeight: label.implicitHeight
-
-      TreeConnector {
-         id: treeConnector
-         depth: treeItemDelegate.depth
-         indent: treeItemDelegate.indent
-         padding: treeItemDelegate.padding
-         indicatorX: indicator.x
-         indicatorWidth: indicator.width
-         iconX: icon.x
-      }
-
-      onYChanged: {
-         treeConnector.requestPaint();
-      }
-             
-      TapHandler {
-         onTapped: treeView.toggleExpanded(row)
-      }
-
-      readonly property string src: "qrc:/Resources/Images/"  
-         
-      Image {
-         id: indicator
-         visible: treeItemDelegate.isTreeNode && treeItemDelegate.hasChildren
-         x: padding + (treeItemDelegate.depth * treeItemDelegate.indent)
-         anchors.verticalCenter: parent.verticalCenter         
-         readonly property string on: "on.png"
-         readonly property string off: "off.png"
-         source: treeItemDelegate.expanded ? src + off : src + on
-      }  
-
-      Image {
-         id: icon
-         visible: treeItemDelegate.isTreeNode && treeItemDelegate.hasChildren
-         x: indicator.x + treeItemDelegate.indent
-         anchors.verticalCenter: parent.verticalCenter
-         source: src + model.icon
-      }  
-            
-      Text {
-         id: label
-         x: treeItemDelegate.isTreeNode ? icon.x + treeItemDelegate.indent : padding
-         anchors.verticalCenter: parent.verticalCenter
-         width: treeItemDelegate.width - treeItemDelegate.padding - x
-         elide: Text.ElideRight
-         text: model.display
-      }         
+   delegate: HardwareTreeDelegate{
    }
   
    Component.onCompleted: {

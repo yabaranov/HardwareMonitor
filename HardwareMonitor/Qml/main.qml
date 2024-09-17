@@ -5,7 +5,7 @@ Window {
    width: 600
    height: 900
    visible: true
-   title: qsTr("Hardware monitor")
+   title: "Hardware monitor"
    
    property var treeModel: hardwareTreeController.getHardwareTreeModel()
 
@@ -19,6 +19,7 @@ Window {
          syncView: treeView
          model: ["Sensor", "Value", "Min", "Max"]     
          delegate: Item {  
+
          implicitWidth: 80
          implicitHeight: 50
             Label {
