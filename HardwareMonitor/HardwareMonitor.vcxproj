@@ -181,6 +181,9 @@ xcopy /y /d "$(OutDir)LibreHardwareMonitorLib.dll" "$(SolutionDir)deploy"</Comma
   <ItemGroup>
     <QtRcc Include="res.qrc" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources\app_icon.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />

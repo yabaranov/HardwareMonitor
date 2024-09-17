@@ -36,6 +36,5 @@
         <file>Resources/Images/time.png</file>
         <file>Resources/Images/voltage.png</file>        
         <file>Resources/Images/transparent.png</file>
-        <file>Resources/Images/icon.png</file>
     </qresource>
 </RCC>

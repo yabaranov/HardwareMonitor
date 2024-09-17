@@ -18,6 +18,7 @@ Window {
          width: parent.width
          syncView: treeView
          model: ["Sensor", "Value", "Min", "Max"]     
+         resizableColumns: false
          delegate: Item {  
 
          implicitWidth: 80
@@ -36,5 +37,5 @@ Window {
          width: parent.width
          height: parent.height - header.implicitHeight         
       }  
-}
+   }
 }
