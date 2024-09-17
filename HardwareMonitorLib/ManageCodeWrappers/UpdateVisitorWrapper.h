@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UpdateVisitor.h"
+#include "../ManageCode/UpdateVisitor.h"
 #include <msclr/auto_gcroot.h>
 
 struct UpdateVisitorWrapper

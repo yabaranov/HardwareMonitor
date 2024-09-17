@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HardwareType.h"
+#include "HardwareData/HardwareType.h"
 
 #include <unordered_map>
 #include <QString>

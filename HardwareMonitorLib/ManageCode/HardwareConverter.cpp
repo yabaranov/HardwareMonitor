@@ -1,7 +1,7 @@
-#include "HardwareConversion.h"
+#include "HardwareConverter.h"
 #include <map>
 
-std::shared_ptr<Hardware> convertHardware(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_ptr<Hardware> parent)
+std::shared_ptr<Hardware> HardwareConverter::convertHardware(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_ptr<Hardware> parent)
 {
    auto hardware = std::make_shared<Hardware>(msclr::interop::marshal_as<std::wstring>(hw->Name), static_cast<HardwareType>(hw->HardwareType));
    hardware->parent = parent;
@@ -11,12 +11,12 @@ std::shared_ptr<Hardware> convertHardware(LibreHardwareMonitor::Hardware::IHardw
       hardware->children.push_back(convertHardware(subHardware, hardware));
    }
 
-   populateSensors(hw, hardware);
+   mapSensorsToHardware(hw, hardware);
 
    return hardware;
 }
 
-void populateSensors(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_ptr<Hardware> parent)
+void HardwareConverter::mapSensorsToHardware(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_ptr<Hardware> parent)
 {
    std::map<std::pair<std::wstring, HardwareType>, std::vector<Hardware>> hardwareMap;
 
@@ -42,7 +42,7 @@ void populateSensors(LibreHardwareMonitor::Hardware::IHardware^ hw, std::shared_
    }
 }
 
-Hardware convertSensor(LibreHardwareMonitor::Hardware::ISensor^ sr)
+Hardware HardwareConverter::convertSensor(LibreHardwareMonitor::Hardware::ISensor^ sr)
 {
    Hardware hardware;
 

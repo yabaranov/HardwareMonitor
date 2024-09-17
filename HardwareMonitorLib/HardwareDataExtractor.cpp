@@ -1,7 +1,7 @@
 #include "HardwareDataExtractor.h"
-#include "ComputerWrapper.h"
-#include "UpdateVisitor/UpdateVisitorWrapper.h"
-#include "HardwareConversion.h"
+#include "ManageCodeWrappers/ComputerWrapper.h"
+#include "ManageCodeWrappers/UpdateVisitorWrapper.h"
+#include "ManageCode/HardwareConverter.h"
 
 HardwareDataExtractor::HardwareDataExtractor() : m_computer(std::make_unique<ComputerWrapper>()), m_updateVisitor(std::make_unique<UpdateVisitorWrapper>())
 {
@@ -30,7 +30,7 @@ std::shared_ptr<Hardware> HardwareDataExtractor::getHardwareData()
 
    for each (LibreHardwareMonitor::Hardware::IHardware ^ hw in m_computer->API->Hardware) 
    {
-      hardwareRoot->children.push_back(convertHardware(hw, hardwareRoot));
+      hardwareRoot->children.push_back(HardwareConverter::convertHardware(hw, hardwareRoot));
    }
 
    return hardwareRoot;

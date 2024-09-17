@@ -6,7 +6,7 @@
 #define DLL_EXPORT __declspec(dllimport)
 #endif
 
-#include "Hardware.h"
+#include "HardwareData/Hardware.h"
 
 #include <vector>
 #include <memory>

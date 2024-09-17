@@ -2,7 +2,7 @@
 
 #include <QAbstractItemModel>
 #include <qqml.h>
-#include "Hardware.h"
+#include "HardwareData/Hardware.h"
 
 
 class HardwareTreeModel : public QAbstractItemModel

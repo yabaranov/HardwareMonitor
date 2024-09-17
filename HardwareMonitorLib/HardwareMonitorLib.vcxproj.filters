@@ -18,10 +18,10 @@
     <ClCompile Include="HardwareDataExtractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HardwareConversion.cpp">
+    <ClCompile Include="ManageCode\HardwareConverter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UpdateVisitor\UpdateVisitor.cpp">
+    <ClCompile Include="ManageCode\UpdateVisitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,22 +29,22 @@
     <ClInclude Include="HardwareDataExtractor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hardware.h">
+    <ClInclude Include="HardwareData\Hardware.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ComputerWrapper.h">
+    <ClInclude Include="ManageCodeWrappers\ComputerWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UpdateVisitor\UpdateVisitorWrapper.h">
+    <ClInclude Include="ManageCodeWrappers\UpdateVisitorWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HardwareConversion.h">
+    <ClInclude Include="ManageCode\HardwareConverter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UpdateVisitor\UpdateVisitor.h">
+    <ClInclude Include="ManageCode\UpdateVisitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HardwareType.h">
+    <ClInclude Include="HardwareData\HardwareType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
