@@ -10,16 +10,14 @@ Item {
    required property int depth
 
    readonly property real indent: treeView.indent
-   readonly property real padding: treeView.padding  
 
-   implicitWidth: hardwareTreeDelegate.padding + label.x + label.implicitWidth + hardwareTreeDelegate.padding
+   implicitWidth: label.x + label.implicitWidth
    implicitHeight: label.implicitHeight
 
    TreeConnector {
       id: treeConnector
       depth: hardwareTreeDelegate.depth
       indent: hardwareTreeDelegate.indent
-      padding: hardwareTreeDelegate.padding
       indicatorX: indicator.x
       indicatorWidth: indicator.width
       iconX: icon.x
@@ -36,7 +34,7 @@ Item {
    Image {
       id: indicator
       visible: hardwareTreeDelegate.isTreeNode && hardwareTreeDelegate.hasChildren
-      x: hardwareTreeDelegate.padding + (hardwareTreeDelegate.depth * hardwareTreeDelegate.indent)
+      x: hardwareTreeDelegate.depth * hardwareTreeDelegate.indent
       anchors.verticalCenter: parent.verticalCenter         
       source: treeView.src + (hardwareTreeDelegate.expanded ? treeView.off : treeView.on)
    }  
@@ -51,9 +49,9 @@ Item {
 
    Text {
       id: label
-      x: hardwareTreeDelegate.isTreeNode ? icon.x + hardwareTreeDelegate.indent : hardwareTreeDelegate.padding
+      x: hardwareTreeDelegate.isTreeNode ? icon.x + hardwareTreeDelegate.indent : 0
       anchors.verticalCenter: parent.verticalCenter
-      width: hardwareTreeDelegate.width - hardwareTreeDelegate.padding - x
+      width: hardwareTreeDelegate.width - x
       elide: Text.ElideRight
       text: model.display
    }         

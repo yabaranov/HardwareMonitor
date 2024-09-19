@@ -3,12 +3,13 @@ import QtQuick.Controls
 
 TreeView {
    id: treeView
+   property var treeModel: hardwareTreeController.getHardwareTreeModel()
    model: treeModel
 
    columnWidthProvider: 
       function(index) {
          const totalWidth = treeView.width;
-         const columnCount = treeModel.columnCount()  
+         const columnCount = model.columnCount()  
          const minSensorColumnWidth = 200
          const fixedColumnWidth = 80
    
@@ -24,7 +25,6 @@ TreeView {
    readonly property string on: "on.png"
    readonly property string off: "off.png"
    readonly property real indent: 20
-   readonly property real padding: 5 
 
    delegate: HardwareTreeDelegate{
    }
@@ -35,9 +35,11 @@ TreeView {
 
    ScrollBar.vertical: CustomScrollBar {
       policy: ScrollBar.AlwaysOn
+      smooth: true
    }
 
    ScrollBar.horizontal: CustomScrollBar {
       policy: ScrollBar.AsNeeded
+      smooth: true
    }
 }

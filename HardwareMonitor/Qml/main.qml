@@ -5,10 +5,8 @@ Window {
    width: 600
    height: 900
    visible: true
-   title: "Hardware monitor"
+   title: "HardwareMonitor"
    
-   property var treeModel: hardwareTreeController.getHardwareTreeModel()
-
    Column {
       anchors.fill: parent
       anchors.leftMargin: 10
@@ -19,10 +17,11 @@ Window {
          syncView: treeView
          model: ["Sensor", "Value", "Min", "Max"]     
          resizableColumns: false
-         delegate: Item {  
 
-         implicitWidth: 80
-         implicitHeight: 50
+         delegate: Item {  
+            implicitWidth: 80
+            implicitHeight: 50
+
             Label {
                anchors.fill: parent
                text: modelData

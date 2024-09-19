@@ -1,7 +1,7 @@
 #include "HardwareTask.h"
 #include <QThread>
 
-void HardwareTask::process()
+void HardwareTask::updateSensorData()
 {
    auto rootItem = m_hardwareDataExtractor.getHardwareData();
    emit sensorDataUpdated(rootItem);

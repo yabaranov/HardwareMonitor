@@ -7,7 +7,6 @@ Canvas {
 
    property int depth
    property real indent
-   property real padding
    property real indicatorX
    property real indicatorWidth
    property real iconX
@@ -22,7 +21,7 @@ Canvas {
       if(column === 0) {       
          ctx.beginPath();
 
-         var dist = treeConnector.padding + treeConnector.indicatorWidth / 2
+         var dist = treeConnector.indicatorWidth / 2
          for (var i = 0; i <= depth; i++) {
             ctx.moveTo((i * treeConnector.indent) + dist, 0);
             ctx.lineTo((i * treeConnector.indent) + dist, treeConnector.height);

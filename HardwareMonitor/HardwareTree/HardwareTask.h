@@ -9,7 +9,7 @@ class HardwareTask : public QObject
    HardwareDataExtractor m_hardwareDataExtractor;
 
 public slots:
-   void process();
+   void updateSensorData();
 signals:
    void sensorDataUpdated(std::shared_ptr<Hardware> rootItem);
 };

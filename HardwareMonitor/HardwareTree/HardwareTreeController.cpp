@@ -6,24 +6,24 @@
 
 HardwareTreeController::HardwareTreeController(QObject* parent) : QObject(parent)
 {
-   HardwareDataExtractor hardwareMonitorLib;
-   m_hardwareTreeModel = std::make_unique<HardwareTreeModel>(hardwareMonitorLib.getHardwareData());
+   HardwareDataExtractor hardwareMonitorExtractor;
+   m_hardwareTreeModel = std::make_unique<HardwareTreeModel>(hardwareMonitorExtractor.getHardwareData());
 }
 
 void HardwareTreeController::makeHardwareThread()
 {
-   HardwareTask* worker = new HardwareTask();
+   HardwareTask* hardwareTask = new HardwareTask();
    QThread* thread = new QThread();
 
-   worker->moveToThread(thread);
+   hardwareTask->moveToThread(thread);
 
-   connect(thread, &QThread::finished, worker, &QObject::deleteLater);
+   connect(thread, &QThread::finished, hardwareTask, &QObject::deleteLater);
 
-   connect(thread, &QThread::started, worker, &HardwareTask::process);
+   connect(thread, &QThread::started, hardwareTask, &HardwareTask::updateSensorData);
 
-   connect(worker, &HardwareTask::sensorDataUpdated, m_hardwareTreeModel.get(), &HardwareTreeModel::updateModel);
+   connect(hardwareTask, &HardwareTask::sensorDataUpdated, m_hardwareTreeModel.get(), &HardwareTreeModel::updateModel);
 
-   connect(&m_timer, &QTimer::timeout, worker, &HardwareTask::process);
+   connect(&m_timer, &QTimer::timeout, hardwareTask, &HardwareTask::updateSensorData);
    m_timer.start(1000);
 
    thread->start();
