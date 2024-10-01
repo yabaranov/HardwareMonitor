@@ -139,10 +139,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="HidSharp">
-      <HintPath>..\External\LibreHardwareMonitorLib\bin\Release\net472\HidSharp.dll</HintPath>
+      <HintPath>..\External\LibreHardwareMonitorLib\HidSharp.dll</HintPath>
     </Reference>
     <Reference Include="LibreHardwareMonitorLib">
-      <HintPath>..\External\LibreHardwareMonitorLib\bin\Release\net472\LibreHardwareMonitorLib.dll</HintPath>
+      <HintPath>..\External\LibreHardwareMonitorLib\LibreHardwareMonitorLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
