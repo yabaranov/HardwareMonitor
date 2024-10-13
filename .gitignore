@@ -1,4 +1,2 @@
-.vs/
-bin/
-obj/
-deploy/
+build/
+CMakeLists.txt.user
