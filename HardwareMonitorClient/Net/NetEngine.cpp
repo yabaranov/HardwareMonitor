@@ -7,11 +7,9 @@
 #include <QGrpcChannelOptions>
 #include <qprotobufregistration.h>
 
-#include <iostream>
-
 NetEngine::NetEngine(QObject *parent)
     : QObject(parent),
-      m_client(std::make_shared<GrpcHardwareMonitor::HardwareService::Client>())
+      m_client(std::make_unique<GrpcHardwareMonitor::HardwareService::Client>())
 {
 }
 
@@ -24,9 +22,9 @@ NetEngine::~NetEngine()
     }
 }
 
-Q_INVOKABLE void NetEngine::startSensorThread()
+void NetEngine::startSensorThread()
 {
-    m_sensorThread = std::make_unique<SensorThread>(m_client);
+    m_sensorThread = std::make_unique<SensorThread>(m_client.get());
 
     connect(m_sensorThread.get(), &SensorThread::networkError, this,
         &NetEngine::networkError, Qt::QueuedConnection);
@@ -36,7 +34,7 @@ Q_INVOKABLE void NetEngine::startSensorThread()
     m_sensorThread->start();
 }
 
-Q_INVOKABLE void NetEngine::login(const QUrl& hostUri, const QString &name, const QString &password)
+void NetEngine::login(const QUrl& hostUri, const QString &name, const QString &password)
 {
     //QHash<QByteArray, QByteArray> metadata =
     //    {
@@ -50,7 +48,6 @@ Q_INVOKABLE void NetEngine::login(const QUrl& hostUri, const QString &name, cons
     //std::shared_ptr<QAbstractGrpcChannel> channel = std::make_shared<QGrpcHttp2Channel>(hostUri, channelOptions);
 
     //m_client->attachChannel(channel);
-
     //std::shared_ptr<QGrpcCallReply> replyCheckAuthentication = m_client->checkAuthentication(GrpcHardwareMonitor::None());
 
     //connect(replyCheckAuthentication.get(), &QGrpcCallReply::finished, this,
@@ -66,10 +63,11 @@ Q_INVOKABLE void NetEngine::login(const QUrl& hostUri, const QString &name, cons
     //    Qt::SingleShotConnection
     //);
 
+
     emit auth(true);
 }
 
-Q_INVOKABLE GrpcHardwareMonitor::HardwareStructure NetEngine::getHardwareStructure()
+GrpcHardwareMonitor::HardwareStructure NetEngine::getHardwareStructure()
 {
     //std::shared_ptr<QGrpcCallReply> replyHardwareStructure = m_client->getHardwareStructure(GrpcHardwareMonitor::None());
 

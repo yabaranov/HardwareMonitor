@@ -7,8 +7,7 @@
 class SensorModel : public QAbstractTableModel
 {
 public:
-    explicit SensorModel(QObject* parent = nullptr);
-    void setSensors(const GrpcHardwareMonitor::SensorRepeated& sensors);
+    explicit SensorModel(const GrpcHardwareMonitor::SensorRepeated& sensors, QObject* parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -18,12 +17,12 @@ public:
     void changeSensorValue(const GrpcHardwareMonitor::SensorInfo& sensorInfo);
 
 private:
+    const quint32 NUMBER_OF_COLUMNS = 2;
 
     enum SensorRoles
     {
         Name = Qt::UserRole,
-        Value,
-        IconSrc
+        Value
     };
 
     GrpcHardwareMonitor::SensorRepeated m_sensors;

@@ -2,9 +2,7 @@
 
 #include "HardwareService_client.grpc.qpb.h"
 
-
-
-SensorThread::SensorThread(std::shared_ptr<GrpcHardwareMonitor::HardwareService::Client> client, QObject* parent)
+SensorThread::SensorThread(GrpcHardwareMonitor::HardwareService::Client* client, QObject* parent)
     : QThread(parent),
       m_client(client)
 {

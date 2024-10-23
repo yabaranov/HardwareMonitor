@@ -1,13 +1,10 @@
 #include "SensorModel.h"
 
-SensorModel::SensorModel(QObject* parent)
-{
+#include "DataMappers/SensorPrecisionProvider.h"
+#include "DataMappers/SensorUnitProvider.h"
 
-}
-
-void SensorModel:: setSensors(const GrpcHardwareMonitor::SensorRepeated& sensors)
+SensorModel::SensorModel(const GrpcHardwareMonitor::SensorRepeated& sensors, QObject* parent) : QAbstractTableModel(parent), m_sensors(sensors)
 {
-    m_sensors = sensors;
 }
 
 int SensorModel::rowCount(const QModelIndex &parent) const
@@ -19,7 +16,7 @@ int SensorModel::rowCount(const QModelIndex &parent) const
 int SensorModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return 2;
+    return NUMBER_OF_COLUMNS;
 }
 
 QVariant SensorModel::data(const QModelIndex &index, int role) const
@@ -36,14 +33,17 @@ QVariant SensorModel::data(const QModelIndex &index, int role) const
 
     switch (role)
     {
-    case Name:
-        return sensor.name();
-    case Value:
-        return sensor.hasValue() ? sensor.value(): 0;
-    case IconSrc:
-        return "-";
-    default:
-        return QVariant();
+        case Name:
+            return sensor.name();
+        case Value:           
+        {
+            auto sensorType = sensor.type();
+            auto precision = SensorPrecisionProvider::getPrecision(sensorType);
+            return sensor.hasValue() ?
+                       SensorUnitProvider::getUnit(sensorType).arg(sensor.value(), 0, 'f', precision) : "-";
+        }
+        default:
+            return QVariant();
     }
 }
 
@@ -52,7 +52,6 @@ QHash<int, QByteArray> SensorModel::roleNames() const
     QHash<int, QByteArray> roles = QAbstractTableModel::roleNames();
     roles[Name] = "name";
     roles[Value] = "value";
-    roles[IconSrc] = "iconSrc";
 
     return roles;
 }
@@ -62,7 +61,7 @@ void SensorModel::changeSensorValue(const GrpcHardwareMonitor::SensorInfo& senso
     qsizetype i = 0;
     for(; i < m_sensors.size(); i++)
     {
-        if(sensorInfo.sensorName()==m_sensors[i].name())
+        if(sensorInfo.sensorName() == m_sensors[i].name())
             break;
     }
 
@@ -70,5 +69,4 @@ void SensorModel::changeSensorValue(const GrpcHardwareMonitor::SensorInfo& senso
 
     QModelIndex sensorIndex = index(static_cast<int>(i), 1);
     emit dataChanged(sensorIndex, sensorIndex);
-
 }

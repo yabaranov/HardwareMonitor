@@ -10,6 +10,7 @@ qt_add_library(${PROJECT_NAME} STATIC
     NetEngine.h
     NetEngine.cpp
     NetState.h
+    NetState.cpp
 
 )
 

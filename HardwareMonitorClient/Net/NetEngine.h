@@ -31,6 +31,6 @@ Q_SIGNALS:
     void sensorChanged(const GrpcHardwareMonitor::SensorInfo&);
 
 private:
-    std::shared_ptr<GrpcHardwareMonitor::HardwareService::Client> m_client;
+    std::unique_ptr<GrpcHardwareMonitor::HardwareService::Client> m_client;
     std::unique_ptr<SensorThread> m_sensorThread;
 };
