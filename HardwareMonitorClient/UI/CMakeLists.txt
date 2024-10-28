@@ -23,12 +23,21 @@ qt_add_qml_module(${PROJECT_NAME}
     RESOURCE_PREFIX "/qt/qml"
     QML_FILES
         Qml/Main.qml
-        Qml/InputField.qml
-        Qml/HardwareView.qml
-        Qml/TopMenuBar.qml
-        Qml/LoginControl.qml
-        Qml/ErrorText.qml
+
         Qml/AppSettings.qml
+
+        Qml/LoginPage.qml
+        Qml/Error.qml
+
+        Qml/HardwarePage.qml    
+
+        Qml/InputField.qml
+        Qml/CustomLabel.qml
+
+        Qml/AppMenuBar.qml
+        Qml/NetMenu.qml
+        Qml/ViewMenu.qml
+        Qml/ThemeMenu.qml
 )
 
 qt_add_resources(${PROJECT_NAME}
@@ -46,7 +55,7 @@ target_link_libraries(${PROJECT_NAME}
         Net
 )
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /MP)

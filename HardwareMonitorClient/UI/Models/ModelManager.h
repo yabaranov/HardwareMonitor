@@ -12,8 +12,10 @@ class ModelManager : public QObject
 public:
     explicit ModelManager(QObject* parent = nullptr);
     Q_INVOKABLE void createModels(const GrpcHardwareMonitor::HardwareStructure& hardwareStructure);
+    Q_INVOKABLE void destroyModels();
     Q_INVOKABLE HardwareModel* getHardwareModel();
     Q_INVOKABLE SensorModel* getSensorTable(int i);
+    Q_INVOKABLE void resetMinAndMax();
 
 public Q_SLOTS:
     void onSensorChanged(const GrpcHardwareMonitor::SensorInfo& sensorInfo);

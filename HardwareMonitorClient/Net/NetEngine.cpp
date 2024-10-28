@@ -11,6 +11,7 @@ NetEngine::NetEngine(QObject *parent)
     : QObject(parent),
       m_client(std::make_unique<GrpcHardwareMonitor::HardwareService::Client>())
 {
+
 }
 
 NetEngine::~NetEngine()
@@ -27,11 +28,27 @@ void NetEngine::startSensorThread()
     m_sensorThread = std::make_unique<SensorThread>(m_client.get());
 
     connect(m_sensorThread.get(), &SensorThread::networkError, this,
-        &NetEngine::networkError, Qt::QueuedConnection);
+            &NetEngine::networkError, Qt::QueuedConnection);
     connect(m_sensorThread.get(), &SensorThread::sensorChanged, this,
-        &NetEngine::sensorChanged, Qt::QueuedConnection);
+            &NetEngine::sensorChanged, Qt::QueuedConnection);
 
     m_sensorThread->start();
+}
+
+void NetEngine::stopSensorThread()
+{
+    if (m_sensorThread && m_sensorThread->isRunning())
+    {
+        m_sensorThread->quit();
+        m_sensorThread->wait();
+    }
+
+    disconnect(m_sensorThread.get(), &SensorThread::networkError, this,
+            &NetEngine::networkError);
+    disconnect(m_sensorThread.get(), &SensorThread::sensorChanged, this,
+            &NetEngine::sensorChanged);
+
+    m_sensorThread.reset();
 }
 
 void NetEngine::login(const QUrl& hostUri, const QString &name, const QString &password)
@@ -54,17 +71,17 @@ void NetEngine::login(const QUrl& hostUri, const QString &name, const QString &p
     //    [replyCheckAuthentication, this] (const QGrpcStatus &status)
     //    {
     //        if (status.code() == QtGrpc::StatusCode::Ok)
-    //            emit auth(true);
+    //            emit auth();
     //        else if (status.code() == QtGrpc::StatusCode::Unauthenticated)
-    //            emit auth(false);
+    //            emit networkError("This username with this password doesn't exists.");
     //        else
     //            emit networkError(status.message());
     //    },
     //    Qt::SingleShotConnection
     //);
 
-
-    emit auth(true);
+    emit auth();
+    //emit networkError("This username with this password doesn't exists.");
 }
 
 GrpcHardwareMonitor::HardwareStructure NetEngine::getHardwareStructure()
@@ -93,7 +110,6 @@ GrpcHardwareMonitor::HardwareStructure NetEngine::getHardwareStructure()
     GrpcHardwareMonitor::SensorRepeated sensors1;
     GrpcHardwareMonitor::Sensor sensor1;
     sensor1.setName("Clock1");
-    sensor1.setValue(1500);
     sensor1.setType(GrpcHardwareMonitor::Sensor::SensorType::Clock);
     sensors1.append(sensor1);
 

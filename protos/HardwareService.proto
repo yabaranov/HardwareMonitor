@@ -28,7 +28,9 @@ message Sensor {
     };
     SensorType type = 1;
 	string name = 2;
-    optional float value = 3;    
+    optional float value = 3;  
+    optional float min = 4;  
+    optional float max = 5;         
 }
 
 message Hardware {

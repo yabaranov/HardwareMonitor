@@ -1,7 +1,7 @@
 #include "SensorPrecisionProvider.h"
 
 const std::unordered_map<GrpcHardwareMonitor::Sensor::SensorType, quint32> SensorPrecisionProvider::m_precisions =
-    {
+{
         {GrpcHardwareMonitor::Sensor::SensorType::Voltage,      3},
         {GrpcHardwareMonitor::Sensor::SensorType::Current,      3},
         {GrpcHardwareMonitor::Sensor::SensorType::Power,        1},

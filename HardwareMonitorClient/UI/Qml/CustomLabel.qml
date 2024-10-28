@@ -1,8 +1,8 @@
+import QtQuick
 import QtQuick.Controls
 
-TextField {
+Label {
     id: root
-    width: 200
     font.pointSize: 14
-    padding: 10
+    elide: Text.ElideRight
 }

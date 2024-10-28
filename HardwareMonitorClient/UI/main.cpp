@@ -2,9 +2,9 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QIcon>
+#include <QQmlContext>
 
 #include "NetEngine.h"
-#include "NetState.h"
 #include "Models/ModelManager.h"
 
 int main(int argc, char *argv[])
@@ -17,16 +17,6 @@ int main(int argc, char *argv[])
     QGuiApplication::setApplicationName("HardwareMonitorClient");
     QGuiApplication::setOrganizationName("BaranovCompany");
 
-    qmlRegisterSingletonType<NetEngine>("NetEngine", 1, 0, "NetEngine", [](QQmlEngine*, QJSEngine*) -> QObject* {
-        return new NetEngine();
-    });
-    qmlRegisterSingletonType<NetState>("NetState", 1, 0, "NetState", [](QQmlEngine*, QJSEngine*) -> QObject* {
-        return new NetState();
-    });
-    qmlRegisterSingletonType<ModelManager>("ModelManager", 1, 0, "ModelManager", [](QQmlEngine*, QJSEngine*) -> QObject* {
-        return new ModelManager();
-    });
-
     QQmlApplicationEngine engine;
 
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed, &app,
@@ -36,6 +26,14 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection
     );
+
+    ModelManager modelManager;
+    NetEngine netEngine;
+
+    QObject::connect(&netEngine, &NetEngine::sensorChanged, &modelManager, &ModelManager::onSensorChanged);
+
+    engine.rootContext()->setContextProperty("netEngine", &netEngine);
+    engine.rootContext()->setContextProperty("modelManager", &modelManager);
 
     engine.loadFromModule("UI", "Main");
 

@@ -22,12 +22,13 @@ public :
     explicit NetEngine(QObject *parent = nullptr);
     ~NetEngine() override;
     Q_INVOKABLE void startSensorThread();
+    Q_INVOKABLE void stopSensorThread();
     Q_INVOKABLE void login(const QUrl& hostUri, const QString &name, const QString &password);
     Q_INVOKABLE GrpcHardwareMonitor::HardwareStructure getHardwareStructure();
 
 Q_SIGNALS:
     void networkError(const QString&);
-    void auth(bool state);
+    void auth();
     void sensorChanged(const GrpcHardwareMonitor::SensorInfo&);
 
 private:

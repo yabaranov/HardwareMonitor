@@ -1,9 +1,7 @@
 import QtQuick
 import QtQuick.Controls
-
-import NetEngine
-import NetState
-import ModelManager
+import QtQuick.Layouts
+import QtQuick.Controls.Universal
 
 import UI
 
@@ -12,31 +10,69 @@ ApplicationWindow {
     visible: true
     width: 640
     height: 480
-    minimumWidth: 640
-    minimumHeight: 480
+    minimumWidth: 320
+    minimumHeight: 240
+
     title: qsTr("Hardware monitor client")
 
     Universal.theme: AppSettings.theme
-    Universal.accent: Universal.Violet
 
-    menuBar: TopMenuBar {
-        id: topMenuBar
+    menuBar: AppMenuBar {
+        id: appMenuBar
     }
 
-    LoginControl {
-        id: loginControl
-        visible: NetState.currentState !== NetState.Connected
-        anchors.centerIn: parent
+    StackView {
+        id: stackView
+        anchors.fill: parent
+        initialItem: loginPage
     }
 
-    HardwareView {
-        id: hardwareView
+    LoginPage {
+        id: loginPage
+        header: ToolBar {
+            CustomLabel {
+                anchors.centerIn: parent
+                text: "Login"
+            }
+        }
+    }
+
+    HardwarePage {
+        id: hardwarePage
+        visible: false
+        header: ToolBar {
+            ToolButton {
+                id: buttonBack
+                anchors.left: parent.left
+                text: "<"
+                onClicked: {
+                    stackView.pop();
+                    netEngine.stopSensorThread();
+                    modelManager.destroyModels();
+                }
+            }
+
+            CustomLabel {
+                anchors.centerIn: parent
+                text: "Hardwares"
+            }
+        }     
     }
 
     Connections {
-        target: NetEngine
-        function onSensorChanged(sensorInfo){
-            ModelManager.onSensorChanged(sensorInfo);
+        target: netEngine
+
+        function onAuth() {
+            loginPage.connectingBar.visible = false;
+            modelManager.createModels(netEngine.getHardwareStructure());
+            netEngine.startSensorThread();
+            stackView.push(hardwarePage);
+        }
+        function onNetworkError(errorString) {
+            loginPage.connectingBar.visible = false;
+            loginPage.error.text = errorString;
+            loginPage.error.visible = true;
         }
     }
+
 }

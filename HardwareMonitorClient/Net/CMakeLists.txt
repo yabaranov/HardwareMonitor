@@ -9,9 +9,6 @@ qt_add_library(${PROJECT_NAME} STATIC
     SensorThread.cpp
     NetEngine.h
     NetEngine.cpp
-    NetState.h
-    NetState.cpp
-
 )
 
 qt_add_protobuf(${PROJECT_NAME}
@@ -34,7 +31,7 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /MP)

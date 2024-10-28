@@ -1,7 +1,7 @@
 #include "SensorUnitProvider.h"
 
 const std::unordered_map<GrpcHardwareMonitor::Sensor::SensorType, QString> SensorUnitProvider::m_units =
-    {
+{
         {GrpcHardwareMonitor::Sensor::SensorType::Voltage,      "%1 V"},
         {GrpcHardwareMonitor::Sensor::SensorType::Current,      "%1 A"},
         {GrpcHardwareMonitor::Sensor::SensorType::Power,        "%1 W"},

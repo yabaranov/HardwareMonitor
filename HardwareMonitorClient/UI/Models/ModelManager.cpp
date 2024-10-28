@@ -12,6 +12,12 @@ void ModelManager::createModels(const GrpcHardwareMonitor::HardwareStructure& ha
         m_sensorTables.push_back(std::make_unique<SensorModel>(hardware.sensors()));
 }
 
+void ModelManager::destroyModels()
+{
+    HardwareModel().swap(*m_hardwareModel);
+    m_sensorTables.clear();
+}
+
 HardwareModel* ModelManager::getHardwareModel()
 {
     return m_hardwareModel.get();
@@ -34,4 +40,10 @@ void ModelManager::onSensorChanged(const GrpcHardwareMonitor::SensorInfo& sensor
 
     m_sensorTables[i]->changeSensorValue(sensorInfo);
 
+}
+
+void ModelManager::resetMinAndMax()
+{
+    for(auto& sensorTable: m_sensorTables)
+        sensorTable->resetMinAndMax();
 }
