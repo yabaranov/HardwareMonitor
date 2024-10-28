@@ -29,7 +29,11 @@ qt_add_qml_module(${PROJECT_NAME}
         Qml/LoginPage.qml
         Qml/Error.qml
 
-        Qml/HardwarePage.qml    
+        Qml/HardwarePage.qml
+        Qml/HardwareView.qml
+        Qml/SensorTableRepeater.qml
+        Qml/SensorTableView.qml
+        Qml/HeaderOfSensorTableView.qml
 
         Qml/InputField.qml
         Qml/CustomLabel.qml
