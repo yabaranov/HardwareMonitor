@@ -14,16 +14,31 @@ Item {
     Dialog {
         id: errorDialog
         modal: true
-        standardButtons: Dialog.Ok
         anchors.centerIn: parent
-        spacing: 10
 
-        CustomLabel {
-            id: errorText
-        }
+        Column {
+            spacing: 10
 
-        onClosed: {
-            root.visible = false;
+            CustomLabel {
+                id: errorText
+            }
+
+            Button {
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width / 2
+                height: 40
+
+                CustomLabel {
+                    id: enterText
+                    text: qsTr("Close")
+                    anchors.centerIn: parent
+                }
+
+                onClicked: {
+                    errorDialog.close();
+                    root.visible = false;
+                }
+            }
         }
     }
 }

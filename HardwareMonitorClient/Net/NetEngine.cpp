@@ -7,11 +7,18 @@
 #include <QGrpcChannelOptions>
 #include <qprotobufregistration.h>
 
+#include "Logger/Logger.h"
+
 NetEngine::NetEngine(QObject *parent)
     : QObject(parent),
       m_client(std::make_unique<GrpcHardwareMonitor::HardwareService::Client>())
 {
+}
 
+NetEngine& NetEngine::instance()
+{
+    static NetEngine netEngine;
+    return netEngine;
 }
 
 NetEngine::~NetEngine()
@@ -24,7 +31,7 @@ NetEngine::~NetEngine()
 }
 
 void NetEngine::startSensorThread()
-{
+{   
     m_sensorThread = std::make_unique<SensorThread>(m_client.get());
 
     connect(m_sensorThread.get(), &SensorThread::networkError, this,
@@ -33,6 +40,7 @@ void NetEngine::startSensorThread()
             &NetEngine::sensorChanged, Qt::QueuedConnection);
 
     m_sensorThread->start();
+    Logger::instance().info("Start sensor thread");
 }
 
 void NetEngine::stopSensorThread()
@@ -49,6 +57,8 @@ void NetEngine::stopSensorThread()
             &NetEngine::sensorChanged);
 
     m_sensorThread.reset();
+
+    Logger::instance().info("Stop sensor thread");
 }
 
 void NetEngine::login(const QUrl& hostUri, const QString &name, const QString &password)

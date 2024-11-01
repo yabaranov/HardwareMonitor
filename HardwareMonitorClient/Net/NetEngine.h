@@ -19,12 +19,12 @@ class NetEngine : public QObject
     Q_OBJECT
 
 public :
-    explicit NetEngine(QObject *parent = nullptr);
-    ~NetEngine() override;
     Q_INVOKABLE void startSensorThread();
     Q_INVOKABLE void stopSensorThread();
     Q_INVOKABLE void login(const QUrl& hostUri, const QString &name, const QString &password);
     Q_INVOKABLE GrpcHardwareMonitor::HardwareStructure getHardwareStructure();
+
+    static NetEngine& instance();
 
 Q_SIGNALS:
     void networkError(const QString&);
@@ -32,6 +32,11 @@ Q_SIGNALS:
     void sensorChanged(const GrpcHardwareMonitor::SensorInfo&);
 
 private:
+    explicit NetEngine(QObject *parent = nullptr);
+    ~NetEngine() override;
+    NetEngine(const NetEngine&);
+    NetEngine& operator=(const NetEngine&);
+
     std::unique_ptr<GrpcHardwareMonitor::HardwareService::Client> m_client;
     std::unique_ptr<SensorThread> m_sensorThread;
 };

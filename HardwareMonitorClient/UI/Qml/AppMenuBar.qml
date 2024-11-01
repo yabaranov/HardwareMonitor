@@ -11,8 +11,8 @@ MenuBar {
         id: viewMenu
     }
 
-    ThemeMenu {
-        id: themeMenu
+    OptionsMenu {
+        id: optionsMenu
     }
 }
 

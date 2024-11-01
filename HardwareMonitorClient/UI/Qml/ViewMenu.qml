@@ -1,36 +1,36 @@
+import QtQuick
 import QtQuick.Controls
 
 Menu {
     id: root
-    title: "View"
+    title: qsTr("View")
 
     MenuItem {
-        text: "Reset Min/Max"
+        text: qsTr("Reset Min/Max")
         onTriggered:
         {
             modelManager.resetMinAndMax();
+            logger.info("Reset min and max")
         }
     }
 
     Menu {
-        title: "Columns"
+        title: qsTr("Columns")
 
-        CheckBox {
-            checked: AppSettings.columnVisibility[0]
-            text: qsTr("Value")
-            onCheckedChanged: AppSettings.setColumnVisibility(0, checked)
-        }
+        Repeater {
+            model: [
+                { index: 0, text: qsTr("Value") },
+                { index: 1, text: qsTr("Min") },
+                { index: 2, text: qsTr("Max") }
+            ]
 
-        CheckBox {
-            checked: AppSettings.columnVisibility[1]
-            text: qsTr("Min")
-            onCheckedChanged: AppSettings.setColumnVisibility(1, checked)
-        }
-
-        CheckBox {
-            checked: AppSettings.columnVisibility[2]
-            text: qsTr("Max")
-            onCheckedChanged: AppSettings.setColumnVisibility(2, checked)
+            CheckBox {
+                checked: AppSettings.columnVisibility[modelData.index]
+                text: modelData.text
+                onCheckedChanged: {
+                    AppSettings.setColumnVisibility(modelData.index, checked);
+                }
+            }
         }
     }
 }

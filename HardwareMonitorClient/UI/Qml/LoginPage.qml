@@ -5,7 +5,6 @@ Page {
     id: root
 
     property alias connectingBar: connectingBar
-    property alias error: error
 
     Column {
         id: loginControl       
@@ -37,7 +36,7 @@ Page {
         Button {
             id: loginButton
             anchors.horizontalCenter: parent.horizontalCenter
-            width: enterText.implicitWidth + 20
+            width: parent.width / 2
             height: 40
 
             CustomLabel {
@@ -63,6 +62,17 @@ Page {
             id: error
             visible: false
             anchors.horizontalCenter: parent.horizontalCenter          
+        }
+
+        Connections {
+            target: netEngine
+
+            function onNetworkError(errorString) {
+                logger.error("Network error: %1", [errorString])
+                connectingBar.visible = false;
+                error.text = errorString;
+                error.visible = true;
+            }
         }
     }
 }

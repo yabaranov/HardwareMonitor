@@ -28,6 +28,7 @@ ListView {
             onClicked: {
                 root.currentIndex = model.index;
                 root.selectedHardwareIndex = model.index
+                logger.info("Current hardware is %1", [model.name])
             }
         }
     }

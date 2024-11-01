@@ -3,10 +3,10 @@ import QtQuick.Controls
 
 Menu {
     id: root
-    title: "Net"
+    title: qsTr("Net")
 
     MenuItem {
-        text: "Server"
+        text: qsTr("Server")
         onTriggered: serverDialog.open()
 
         Dialog {
@@ -19,7 +19,7 @@ Menu {
                 spacing: 10
 
                 CustomLabel {
-                    text: "Enter server"
+                    text: qsTr("Enter server")
                 }
 
                 InputField {
@@ -35,12 +35,13 @@ Menu {
 
             onAccepted: {
                 AppSettings.serverAddress = serverInputField.text
+                logger.info("New server address is %1", [AppSettings.serverAddress])
             }
         }
     }
 
     MenuItem {
-        text: "Port"
+        text: qsTr("Port")
         onTriggered: portDialog.open()
 
         Dialog {
@@ -53,7 +54,7 @@ Menu {
                 spacing: 10
 
                 CustomLabel {
-                    text: "Enter port"
+                    text: qsTr("Enter port")
                 }
 
                 InputField {
@@ -69,6 +70,7 @@ Menu {
 
             onAccepted: {
                 AppSettings.portNumber = portInputField.text
+                logger.info("New port number is %1", [AppSettings.portNumber])
             }
         }
     }

@@ -1,0 +1,3 @@
+[submodule "HardwareMonitorClient/third-party/spdlog"]
+	path = HardwareMonitorClient/third-party/spdlog
+	url = https://github.com/gabime/spdlog.git

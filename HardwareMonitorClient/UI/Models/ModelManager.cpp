@@ -1,4 +1,5 @@
 #include "ModelManager.h"
+#include "Logger/Logger.h"
 
 ModelManager::ModelManager(QObject* parent) : QObject(parent)
 {
@@ -10,12 +11,14 @@ void ModelManager::createModels(const GrpcHardwareMonitor::HardwareStructure& ha
 
     for(auto& hardware: hardwareStructure.hardwares())
         m_sensorTables.push_back(std::make_unique<SensorModel>(hardware.sensors()));
+    Logger::instance().info("Create models");
 }
 
 void ModelManager::destroyModels()
 {
     HardwareModel().swap(*m_hardwareModel);
     m_sensorTables.clear();
+    Logger::instance().info("Destroy models");
 }
 
 HardwareModel* ModelManager::getHardwareModel()
@@ -23,9 +26,9 @@ HardwareModel* ModelManager::getHardwareModel()
     return m_hardwareModel.get();
 }
 
-SensorModel* ModelManager::getSensorTable(int i)
+SensorModel* ModelManager::getSensorTable(int index)
 {
-    return m_sensorTables[i].get();
+    return m_sensorTables[index].get();
 }
 
 void ModelManager::onSensorChanged(const GrpcHardwareMonitor::SensorInfo& sensorInfo)
@@ -39,7 +42,6 @@ void ModelManager::onSensorChanged(const GrpcHardwareMonitor::SensorInfo& sensor
     }
 
     m_sensorTables[i]->changeSensorValue(sensorInfo);
-
 }
 
 void ModelManager::resetMinAndMax()

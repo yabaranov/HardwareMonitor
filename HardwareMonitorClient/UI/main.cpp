@@ -3,9 +3,12 @@
 #include <QQuickStyle>
 #include <QIcon>
 #include <QQmlContext>
+#include <QTranslator>
 
 #include "NetEngine.h"
 #include "Models/ModelManager.h"
+#include "Logger/Logger.h"
+#include "DataMappers/LanguageChooser.h"
 
 int main(int argc, char *argv[])
 {
@@ -27,11 +30,15 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection
     );
 
+    LanguageChooser languageChooser(engine);
+    engine.rootContext()->setContextProperty("languageChooser", &languageChooser);
+
+    auto& logger = Logger::instance("ClientLogger", "Logs/log.txt");
+    engine.rootContext()->setContextProperty("logger", &logger);
+
     ModelManager modelManager;
-    NetEngine netEngine;
-
-    QObject::connect(&netEngine, &NetEngine::sensorChanged, &modelManager, &ModelManager::onSensorChanged);
-
+    auto& netEngine = NetEngine::instance();
+    QObject::connect(&netEngine, &NetEngine::sensorChanged, &modelManager, &ModelManager::onSensorChanged);      
     engine.rootContext()->setContextProperty("netEngine", &netEngine);
     engine.rootContext()->setContextProperty("modelManager", &modelManager);
 
