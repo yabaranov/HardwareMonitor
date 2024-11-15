@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package GrpcHardwareMonitor;
 
-message Sensor {
+message SensorInfo {
     enum SensorType {        
         Voltage = 0;
         Current = 1;
@@ -27,41 +27,34 @@ message Sensor {
         Unknown = 20;
     };
     SensorType type = 1;
-	string name = 2;
-    optional float value = 3;  
-    optional float min = 4;  
-    optional float max = 5;         
+	string name = 2;      
 }
 
-message Hardware {
-    enum HardwareType {        
-        Cpu = 0;
-        GpuNvidia = 1;
-        GpuAmd = 2;
-        GpuIntel = 3;
-        Storage = 4;
-        Memory = 5;
-        Unknown = 6;
-    };
-    HardwareType type = 1;
-    string name = 2;
-    repeated Sensor sensors = 3;
+message HardwareInfo {
+    string name = 1;
+    repeated SensorInfo sensorInfos = 2;
 }
 
-message HardwareStructure {
+message HardwareListInfo {
+    repeated HardwareInfo hardwareInfos = 1;
+}
+
+message Sensor {
+    float value = 1;    
+}
+
+message Hardware {   
+    repeated Sensor sensors = 1;
+}
+
+message HardwareList {
     repeated Hardware hardwares = 1;
-}
-
-message SensorInfo {
-    string hardwareName = 1;
-    string sensorName = 2;
-	optional float value = 3;
 }
 
 message None {}
 
 service HardwareService {
     rpc checkAuthentication(None) returns (None) {}
-    rpc getHardwareStructure(None) returns (HardwareStructure) {}	 
-    rpc getSensorStream(None) returns (stream SensorInfo){}
+    rpc getHardwareListInfo(None) returns (HardwareListInfo) {}	 
+    rpc getHardwareList(None) returns (stream HardwareList){}
 }

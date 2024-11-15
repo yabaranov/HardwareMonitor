@@ -4,9 +4,14 @@
 #include "DataMappers/SensorUnitProvider.h"
 
 #include <ranges>
+#include <algorithm>
 
-SensorModel::SensorModel(const GrpcHardwareMonitor::SensorRepeated& sensors, QObject* parent) : QAbstractTableModel(parent), m_sensors(sensors)
+SensorModel::SensorModel(const GrpcHardwareMonitor::SensorInfoRepeated& sensorInfos, QObject* parent) : QAbstractTableModel(parent)
 {
+    for(auto& sensorInfo: sensorInfos)
+        m_sensors.append(Sensor{.name = sensorInfo.name(),
+                                .unit = SensorUnitProvider::getUnit(sensorInfo.type()),
+                                .precision = SensorPrecisionProvider::getPrecision(sensorInfo.type())});
 }
 
 int SensorModel::rowCount(const QModelIndex &parent) const
@@ -28,32 +33,28 @@ QVariant SensorModel::data(const QModelIndex &index, int role) const
 
     auto& sensor = m_sensors.at(index.row());
 
-    if (role == Qt::DisplayRole)
-    {
+    if (role == Qt::DisplayRole)   
         role = Qt::UserRole + index.column();
-    }
 
     auto sensorFormatter = [&sensor](auto&& hasValueFunc, auto&& valueFunc)
     {
-        auto sensorType = sensor.type();
-        auto precision = SensorPrecisionProvider::getPrecision(sensorType);
         return hasValueFunc() ?
-            SensorUnitProvider::getUnit(sensorType).arg(valueFunc(), 0, 'f', precision) : "-";
+            sensor.getUnit().arg(valueFunc(), 0, 'f', sensor.getPrecision()) : "-";
     };
 
     switch (role)
     {
         case Name:
-            return sensor.name();
+            return sensor.name;
         case Value:               
             return sensorFormatter([&sensor]() { return sensor.hasValue(); },
-                                   [&sensor]() { return sensor.value(); });
+                                   [&sensor]() { return sensor.getValue(); });
         case Min:
             return sensorFormatter([&sensor]() { return sensor.hasMin(); },
-                                   [&sensor]() { return sensor.min(); });
+                                   [&sensor]() { return sensor.getMin(); });
         case Max:
             return sensorFormatter([&sensor]() { return sensor.hasMax(); },
-                                   [&sensor]() { return sensor.max(); });
+                                   [&sensor]() { return sensor.getMax(); });
         default:
             return QVariant();
     }
@@ -70,32 +71,27 @@ QHash<int, QByteArray> SensorModel::roleNames() const
     return roles;
 }
 
-void SensorModel::changeSensorValue(const GrpcHardwareMonitor::SensorInfo& sensorInfo)
+void SensorModel::changeSensorTable(const GrpcHardwareMonitor::SensorRepeated& sensors)
 {
-    qsizetype i = 0;
-    for(; i < m_sensors.size(); i++)
+    for(auto&& [i, sensor] : std::views::enumerate(sensors))
     {
-        if(sensorInfo.sensorName() == m_sensors[i].name())
-            break;
-    }
+        m_sensors[i].value = sensor.value();
+        QModelIndex valueIndex = index(static_cast<int>(i), 1);
+        emit dataChanged(valueIndex, valueIndex);
 
-    if(sensorInfo.hasValue())
-    {
-        m_sensors[i].setValue(sensorInfo.value());
-        m_sensors[i].setMax(std::max(m_sensors[i].hasMax() ? m_sensors[i].max() : -std::numeric_limits<float>::max(), sensorInfo.value()));
-        m_sensors[i].setMin(std::min(m_sensors[i].hasMin() ? m_sensors[i].min() : std::numeric_limits<float>::max(), sensorInfo.value()));
-    }
-    else
-    {
-        m_sensors[i].clearValue();
-        m_sensors[i].clearMin();
-        m_sensors[i].clearMax();
-    }
+        if(sensor.value() < (m_sensors[i].hasMin() ? m_sensors[i].getMin() : std::numeric_limits<float>::max()))
+        {
+            m_sensors[i].min = sensor.value();
+            QModelIndex minIndex = index(static_cast<int>(i), 2);
+            emit dataChanged(minIndex, minIndex);
+        }
 
-    for(qsizetype j = 1; j < NUMBER_OF_COLUMNS; j++)
-    {
-        QModelIndex sensorIndex = index(static_cast<int>(i), j);
-        emit dataChanged(sensorIndex, sensorIndex);
+        if(sensor.value() > (m_sensors[i].hasMax() ? m_sensors[i].getMax() : -std::numeric_limits<float>::max()))
+        {
+            m_sensors[i].max = sensor.value();
+            QModelIndex maxIndex = index(static_cast<int>(i), 3);
+            emit dataChanged(maxIndex, maxIndex);
+        }
     }
 }
 
@@ -103,21 +99,20 @@ void SensorModel::resetMinAndMax()
 {
     for(auto&& [i, sensor] : std::views::enumerate(m_sensors))
     {
-        sensor.clearMin();
-        QModelIndex sensorIndex = index(static_cast<int>(i), 2);
-        emit dataChanged(sensorIndex, sensorIndex);
-    }
+        sensor.min = std::nullopt;
+        sensor.max = std::nullopt;
 
-    for(auto&& [i, sensor] : std::views::enumerate(m_sensors))
-    {
-        sensor.clearMax();
-        QModelIndex sensorIndex = index(static_cast<int>(i), 3);
-        emit dataChanged(sensorIndex, sensorIndex);
+        QModelIndex minIndex = index(static_cast<int>(i), 2);
+        emit dataChanged(minIndex, minIndex);
+        QModelIndex maxIndex = index(static_cast<int>(i), 3);
+        emit dataChanged(maxIndex, maxIndex);
     }
 }
 
-void swap(SensorModel& lhs, SensorModel& rhs) noexcept
+void SensorModel::swap(SensorModel& rhs) noexcept
 {
     using std::swap;
-    swap(lhs.m_sensors, rhs.m_sensors);
+    swap(m_sensors, rhs.m_sensors);
 }
+
+void swap(SensorModel& lhs, SensorModel& rhs) noexcept {lhs.swap(rhs);}

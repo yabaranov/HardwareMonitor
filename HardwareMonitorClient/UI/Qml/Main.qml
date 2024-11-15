@@ -49,6 +49,7 @@ ApplicationWindow {
                     logger.info("Click back button")
                     stackView.pop();
                     netEngine.stopSensorThread();
+                    sensorLogDatabase.close();
                     modelManager.destroyModels();
                     logger.info("Pop hardware page")
                 }
@@ -58,7 +59,7 @@ ApplicationWindow {
                 anchors.centerIn: parent
                 text: qsTr("Hardwares")
             }
-        }     
+        }
     }
 
     Connections {
@@ -67,7 +68,9 @@ ApplicationWindow {
         function onAuth() {
             logger.info("Successful authentication")
             loginPage.connectingBar.visible = false;
-            modelManager.createModels(netEngine.getHardwareStructure());
+            modelManager.createModels(netEngine.getHardwareListInfo());
+            sensorLogDatabase.open("SensorLogs/" + AppSettings.serverAddress + "_" + AppSettings.portNumber + ".db");
+            sensorLogDatabase.createTables(netEngine.getHardwareListInfo());
             netEngine.startSensorThread();
             stackView.push(hardwarePage);
             logger.info("Push hardware page")

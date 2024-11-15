@@ -37,11 +37,29 @@ void SensorThread::run()
             QList<int> values {12,10,11,15,1000};
             if(i>=values.size())
                 i = 0;
-            GrpcHardwareMonitor::SensorInfo sensorInfo;
-            sensorInfo.setHardwareName("Cpu1");
-            sensorInfo.setSensorName("Clock1");
-            sensorInfo.setValue(values[i++]);
-            emit sensorChanged(sensorInfo);
+            GrpcHardwareMonitor::HardwareRepeated hardwares;
+
+            GrpcHardwareMonitor::SensorRepeated sensors1;
+            GrpcHardwareMonitor::Sensor sensor1;
+            sensor1.setValue(values[i]);
+            sensors1.append(sensor1);
+
+            GrpcHardwareMonitor::Hardware hardware1;
+            hardware1.setSensors(sensors1);
+            hardwares.append(hardware1);
+
+            GrpcHardwareMonitor::SensorRepeated sensors2;
+            GrpcHardwareMonitor::Sensor sensor2;
+            sensor2.setValue(values[i++]);
+            sensors2.append(sensor2);
+
+            GrpcHardwareMonitor::Hardware hardware2;
+            hardware2.setSensors(sensors2);
+            hardwares.append(hardware2);
+
+            GrpcHardwareMonitor::HardwareList hardwareList;
+            hardwareList.setHardwares(hardwares);
+            emit sensorTablesChanged(hardwareList);
         }
     );
 

@@ -1,13 +1,14 @@
 #pragma once
 
 #include <QAbstractTableModel>
+#include "Types/Sensor.h"
 
 #include "HardwareService.qpb.h"
 
 class SensorModel : public QAbstractTableModel
 {
 public:
-    explicit SensorModel(const GrpcHardwareMonitor::SensorRepeated& sensors = {}, QObject* parent = nullptr);
+    explicit SensorModel(const GrpcHardwareMonitor::SensorInfoRepeated& sensorInfos = {}, QObject* parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -16,9 +17,9 @@ public:
 
     void resetMinAndMax();
 
-    void changeSensorValue(const GrpcHardwareMonitor::SensorInfo& sensorInfo);
+    void changeSensorTable(const GrpcHardwareMonitor::SensorRepeated& sensors);
 
-    friend void swap(SensorModel& lhs, SensorModel& rhs) noexcept;
+    void swap(SensorModel& rhs) noexcept;
 
 private:
     const quint32 NUMBER_OF_COLUMNS = 4;
@@ -31,5 +32,7 @@ private:
         Max
     };
 
-    GrpcHardwareMonitor::SensorRepeated m_sensors;
+    QList<Sensor> m_sensors;
 };
+
+void swap(SensorModel& lhs, SensorModel& rhs) noexcept;

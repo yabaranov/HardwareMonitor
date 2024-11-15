@@ -3,16 +3,13 @@ import QtQuick.Controls
 MenuBar {
     id: root
 
-    NetMenu{
-        id: netMenu
+    NetMenu {
     }
 
     ViewMenu {
-        id: viewMenu
     }
 
     OptionsMenu {
-        id: optionsMenu
     }
 }
 

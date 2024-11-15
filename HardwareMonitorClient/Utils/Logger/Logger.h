@@ -11,7 +11,7 @@ class Logger : public QObject
 {
     Q_OBJECT
 public:
-    static Logger& instance(std::string_view loggerName = "Logger", std::string_view loggerPath = "logs/commonLogs.txt");
+    static Logger& instance(std::string_view loggerName = "Logger", std::string_view loggerPath = "Logs/log.txt");
 
     template <typename... Args>
     void critical(fmt::format_string<Args...> fmt, Args &&...args);

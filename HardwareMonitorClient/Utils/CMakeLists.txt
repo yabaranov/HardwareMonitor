@@ -6,6 +6,8 @@ qt_standard_project_setup()
 qt_add_library(${PROJECT_NAME} STATIC
     Logger/Logger.cpp
     Logger/Logger.h
+    DataBase/Database.h
+    DataBase/Database.cpp
 )
 
 add_subdirectory(
@@ -13,11 +15,18 @@ add_subdirectory(
     "${CMAKE_BINARY_DIR}/third-party/spdlog"
 )
 
+add_subdirectory(
+    "${CMAKE_SOURCE_DIR}/third-party/sqlite"
+    "${CMAKE_BINARY_DIR}/third-party/sqlite"
+)
+
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
+        spdlog::spdlog_header_only
+    PRIVATE
         Qt::Core
         Qt::Quick
-        spdlog::spdlog_header_only
+        sqlite3
 )
 
 target_include_directories(${PROJECT_NAME}

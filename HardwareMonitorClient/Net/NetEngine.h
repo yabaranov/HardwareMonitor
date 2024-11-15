@@ -22,14 +22,14 @@ public :
     Q_INVOKABLE void startSensorThread();
     Q_INVOKABLE void stopSensorThread();
     Q_INVOKABLE void login(const QUrl& hostUri, const QString &name, const QString &password);
-    Q_INVOKABLE GrpcHardwareMonitor::HardwareStructure getHardwareStructure();
+    Q_INVOKABLE GrpcHardwareMonitor::HardwareListInfo getHardwareListInfo();
 
     static NetEngine& instance();
 
 Q_SIGNALS:
     void networkError(const QString&);
     void auth();
-    void sensorChanged(const GrpcHardwareMonitor::SensorInfo&);
+    void sensorTablesChanged(const GrpcHardwareMonitor::HardwareList&);
 
 private:
     explicit NetEngine(QObject *parent = nullptr);

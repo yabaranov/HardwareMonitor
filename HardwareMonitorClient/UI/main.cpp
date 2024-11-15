@@ -8,7 +8,9 @@
 #include "NetEngine.h"
 #include "Models/ModelManager.h"
 #include "Logger/Logger.h"
-#include "DataMappers/LanguageChooser.h"
+#include "Controllers/LanguageChooser.h"
+#include "Controllers/SensorLogDatabase.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -30,16 +32,18 @@ int main(int argc, char *argv[])
         Qt::QueuedConnection
     );
 
-    LanguageChooser languageChooser(engine);
-    engine.rootContext()->setContextProperty("languageChooser", &languageChooser);
-
     auto& logger = Logger::instance("ClientLogger", "Logs/log.txt");
     engine.rootContext()->setContextProperty("logger", &logger);
 
+    LanguageChooser languageChooser(engine);
+    engine.rootContext()->setContextProperty("languageChooser", &languageChooser);
+
+    SensorLogDatabase sensorLogDatabase;
     ModelManager modelManager;
     auto& netEngine = NetEngine::instance();
-    QObject::connect(&netEngine, &NetEngine::sensorChanged, &modelManager, &ModelManager::onSensorChanged);      
+    QObject::connect(&netEngine, &NetEngine::sensorTablesChanged, &modelManager, &ModelManager::onSensorTablesChanged);
     engine.rootContext()->setContextProperty("netEngine", &netEngine);
+    engine.rootContext()->setContextProperty("sensorLogDatabase", &sensorLogDatabase);
     engine.rootContext()->setContextProperty("modelManager", &modelManager);
 
     engine.loadFromModule("UI", "Main");

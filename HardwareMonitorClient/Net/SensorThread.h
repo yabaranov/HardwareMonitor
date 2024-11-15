@@ -24,7 +24,7 @@ public:
 
 Q_SIGNALS:
     void networkError(const QString&);
-    void sensorChanged(const GrpcHardwareMonitor::SensorInfo&);
+    void sensorTablesChanged(const GrpcHardwareMonitor::HardwareList&);
 
 private:
     GrpcHardwareMonitor::HardwareService::Client* m_client;

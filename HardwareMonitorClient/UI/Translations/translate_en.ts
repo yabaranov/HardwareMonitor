@@ -27,7 +27,7 @@
         <translation>Login</translation>
     </message>
     <message>
-        <location filename="../Qml/Main.qml" line="59"/>
+        <location filename="../Qml/Main.qml" line="60"/>
         <source>Hardwares</source>
         <translation>Hardwares</translation>
     </message>
@@ -100,7 +100,7 @@
     <message>
         <location filename="../Qml/OptionsMenu.qml" line="40"/>
         <source>Russian</source>
-        <translation>Russian</translation>
+        <translation>Русский</translation>
     </message>
 </context>
 <context>
@@ -157,6 +157,16 @@
         <location filename="../Qml/ViewMenu.qml" line="24"/>
         <source>Max</source>
         <translation>Max</translation>
+    </message>
+    <message>
+        <location filename="../Qml/ViewMenu.qml" line="38"/>
+        <source>Sensor logs</source>
+        <translation>Sensor logs</translation>
+    </message>
+    <message>
+        <location filename="../Qml/ViewMenu.qml" line="42"/>
+        <source>Log sensors</source>
+        <translation>Log sensors</translation>
     </message>
 </context>
 </TS>

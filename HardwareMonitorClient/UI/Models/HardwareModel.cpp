@@ -1,11 +1,11 @@
 #include "HardwareModel.h"
 #include "HardwareService.qpb.h"
+#include "Types/Hardware.h"
 
 class HardwareModel::Impl
 {
 public:
-    explicit Impl(const GrpcHardwareMonitor::HardwareRepeated& hardwareList);
-    const GrpcHardwareMonitor::HardwareRepeated& getHardwareList() const;
+    explicit Impl(const GrpcHardwareMonitor::HardwareInfoRepeated& hardwareInfos);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
@@ -16,40 +16,36 @@ public:
     };
 
 private:
-    GrpcHardwareMonitor::HardwareRepeated m_hardwareList;
+    QList<Hardware> m_hardwares;
 };
 
-HardwareModel::Impl::Impl(const GrpcHardwareMonitor::HardwareRepeated& hardwareList) : m_hardwareList(hardwareList)
+HardwareModel::Impl::Impl(const GrpcHardwareMonitor::HardwareInfoRepeated& hardwareList)
 {
-
-}
-
-const GrpcHardwareMonitor::HardwareRepeated& HardwareModel::Impl::getHardwareList() const
-{
-    return m_hardwareList;
+    for(auto& hardware: hardwareList)
+        m_hardwares.append(Hardware{.name = hardware.name()});
 }
 
 int HardwareModel::Impl::rowCount(const QModelIndex &parent) const
 {
-    return static_cast<int>(m_hardwareList.size());
+    return static_cast<int>(m_hardwares.size());
 }
 
 QVariant HardwareModel::Impl::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= static_cast<int>(m_hardwareList.size()))
+    if (!index.isValid() || index.row() >= static_cast<int>(m_hardwares.size()))
         return QVariant();
 
-    const auto& hardware = m_hardwareList[index.row()];
+    const auto& hardware = m_hardwares[index.row()];
 
     if (role == Name)
-        return hardware.name();
+        return hardware.name;
 
     return QVariant();
 }
 
-HardwareModel::HardwareModel(const GrpcHardwareMonitor::HardwareRepeated& hardwareList, QObject *parent)
+HardwareModel::HardwareModel(const GrpcHardwareMonitor::HardwareInfoRepeated& hardwareInfos, QObject *parent)
     : QAbstractListModel(parent),
-      pImpl(std::make_unique<Impl>(hardwareList))
+      pImpl(std::make_unique<Impl>(hardwareInfos))
 {
 }
 
@@ -69,11 +65,6 @@ QHash<int, QByteArray> HardwareModel::roleNames() const
     roles[pImpl->Name] = "name";
 
     return roles;
-}
-
-const GrpcHardwareMonitor::HardwareRepeated& HardwareModel::getHardwareList() const
-{
-    return pImpl->getHardwareList();
 }
 
 HardwareModel::~HardwareModel() = default;

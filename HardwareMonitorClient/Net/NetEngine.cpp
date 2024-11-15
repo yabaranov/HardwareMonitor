@@ -36,8 +36,8 @@ void NetEngine::startSensorThread()
 
     connect(m_sensorThread.get(), &SensorThread::networkError, this,
             &NetEngine::networkError, Qt::QueuedConnection);
-    connect(m_sensorThread.get(), &SensorThread::sensorChanged, this,
-            &NetEngine::sensorChanged, Qt::QueuedConnection);
+    connect(m_sensorThread.get(), &SensorThread::sensorTablesChanged, this,
+            &NetEngine::sensorTablesChanged, Qt::QueuedConnection);
 
     m_sensorThread->start();
     Logger::instance().info("Start sensor thread");
@@ -53,8 +53,8 @@ void NetEngine::stopSensorThread()
 
     disconnect(m_sensorThread.get(), &SensorThread::networkError, this,
             &NetEngine::networkError);
-    disconnect(m_sensorThread.get(), &SensorThread::sensorChanged, this,
-            &NetEngine::sensorChanged);
+    disconnect(m_sensorThread.get(), &SensorThread::sensorTablesChanged, this,
+            &NetEngine::sensorTablesChanged);
 
     m_sensorThread.reset();
 
@@ -94,7 +94,7 @@ void NetEngine::login(const QUrl& hostUri, const QString &name, const QString &p
     //emit networkError("This username with this password doesn't exists.");
 }
 
-GrpcHardwareMonitor::HardwareStructure NetEngine::getHardwareStructure()
+GrpcHardwareMonitor::HardwareListInfo NetEngine::getHardwareListInfo()
 {
     //std::shared_ptr<QGrpcCallReply> replyHardwareStructure = m_client->getHardwareStructure(GrpcHardwareMonitor::None());
 
@@ -115,35 +115,32 @@ GrpcHardwareMonitor::HardwareStructure NetEngine::getHardwareStructure()
 
     //return hardwareStructure;
 
-    GrpcHardwareMonitor::HardwareRepeated hardwares;
+    GrpcHardwareMonitor::HardwareInfoRepeated hardwares;
 
-    GrpcHardwareMonitor::SensorRepeated sensors1;
-    GrpcHardwareMonitor::Sensor sensor1;
+    GrpcHardwareMonitor::SensorInfoRepeated sensors1;
+    GrpcHardwareMonitor::SensorInfo sensor1;
     sensor1.setName("Clock1");
-    sensor1.setType(GrpcHardwareMonitor::Sensor::SensorType::Clock);
+    sensor1.setType(GrpcHardwareMonitor::SensorInfo::SensorType::Clock);
     sensors1.append(sensor1);
 
-    GrpcHardwareMonitor::Hardware hardware1;
+    GrpcHardwareMonitor::HardwareInfo hardware1;
     hardware1.setName("Cpu1");
-    hardware1.setSensors(sensors1);
-    hardware1.setType(GrpcHardwareMonitor::Hardware::HardwareType::Cpu);
+    hardware1.setSensorInfos(sensors1);
     hardwares.append(hardware1);
 
-    GrpcHardwareMonitor::SensorRepeated sensors2;
-    GrpcHardwareMonitor::Sensor sensor2;
+    GrpcHardwareMonitor::SensorInfoRepeated sensors2;
+    GrpcHardwareMonitor::SensorInfo sensor2;
     sensor2.setName("Clock2");
-    sensor2.setValue(2000);
-    sensor2.setType(GrpcHardwareMonitor::Sensor::SensorType::Clock);
+    sensor2.setType(GrpcHardwareMonitor::SensorInfo::SensorType::Clock);
     sensors2.append(sensor2);
 
-    GrpcHardwareMonitor::Hardware hardware2;
+    GrpcHardwareMonitor::HardwareInfo hardware2;
     hardware2.setName("Cpu2");
-    hardware2.setSensors(sensors2);
-    hardware2.setType(GrpcHardwareMonitor::Hardware::HardwareType::Cpu);
+    hardware2.setSensorInfos(sensors2);
     hardwares.append(hardware2);
 
-    GrpcHardwareMonitor::HardwareStructure hardwareStructure;
-    hardwareStructure.setHardwares(hardwares);
+    GrpcHardwareMonitor::HardwareListInfo hardwareListInfo;
+    hardwareListInfo.setHardwareInfos(hardwares);
 
-    return hardwareStructure;
+    return hardwareListInfo;
 }

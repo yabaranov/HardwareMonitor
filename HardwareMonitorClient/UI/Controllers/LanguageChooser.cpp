@@ -16,7 +16,7 @@ bool LanguageChooser::setLanguage(const QString& languageCode)
 
 bool LanguageChooser::loadTranslation(const QString& languageCode)
 {
-    const bool loaded = m_translator.load("translations/translate_" + languageCode);
+    const bool loaded = m_translator.load("Translations/translate_" + languageCode);
     if (loaded)
     {
         qApp->installTranslator(&m_translator);

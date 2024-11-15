@@ -1,22 +1,24 @@
 #include "ModelManager.h"
 #include "Logger/Logger.h"
 
+#include <ranges>
+
 ModelManager::ModelManager(QObject* parent) : QObject(parent)
 {
 }
 
-void ModelManager::createModels(const GrpcHardwareMonitor::HardwareStructure& hardwareStructure)
+void ModelManager::createModels(const GrpcHardwareMonitor::HardwareListInfo& hardwareListInfo)
 {
-    m_hardwareModel = std::make_unique<HardwareModel>(hardwareStructure.hardwares());
+    m_hardwareModel = std::make_unique<HardwareModel>(hardwareListInfo.hardwareInfos());
 
-    for(auto& hardware: hardwareStructure.hardwares())
-        m_sensorTables.push_back(std::make_unique<SensorModel>(hardware.sensors()));
+    for(auto& hardware: hardwareListInfo.hardwareInfos())
+        m_sensorTables.push_back(std::make_unique<SensorModel>(hardware.sensorInfos()));
     Logger::instance().info("Create models");
 }
 
 void ModelManager::destroyModels()
 {
-    HardwareModel().swap(*m_hardwareModel);
+    m_hardwareModel.reset();
     m_sensorTables.clear();
     Logger::instance().info("Destroy models");
 }
@@ -31,17 +33,12 @@ SensorModel* ModelManager::getSensorTable(int index)
     return m_sensorTables[index].get();
 }
 
-void ModelManager::onSensorChanged(const GrpcHardwareMonitor::SensorInfo& sensorInfo)
+void ModelManager::onSensorTablesChanged(const GrpcHardwareMonitor::HardwareList& hardwareList)
 {
-    auto& hardwares = m_hardwareModel->getHardwareList();
-    qsizetype i = 0;
-    for(; i < hardwares.size(); i++)
-    {
-        if(hardwares[i].name() == sensorInfo.hardwareName())
-            break;
-    }
+   auto& hardwares = hardwareList.hardwares();
 
-    m_sensorTables[i]->changeSensorValue(sensorInfo);
+    for(auto&& [i, hardware]: std::views::enumerate(hardwareList.hardwares()))
+        m_sensorTables[i]->changeSensorTable(hardware.sensors());
 }
 
 void ModelManager::resetMinAndMax()

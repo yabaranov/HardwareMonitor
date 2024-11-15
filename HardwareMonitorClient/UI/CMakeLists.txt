@@ -4,6 +4,8 @@ find_package(Qt6 REQUIRED COMPONENTS Core Quick QuickControls2 LinguistTools)
 
 qt_standard_project_setup()
 
+#-------------------------------------------------------------------------------------------------------------------------------------
+
 set(FILES_TO_TRANSLATE
     Qml/Main.qml
 
@@ -20,7 +22,7 @@ set(TS_FILES
     Translations/translate_ru.ts
     Translations/translate_en.ts
 )
-set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/bin/translations")
+set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Translations")
 
 option(UPDATE_TRANSLATIONS
 "Update source translation (Translations/*.ts)." ON
@@ -41,6 +43,14 @@ set_property(DIRECTORY
     PROPERTY CLEAN_NO_CUSTOM TRUE
 )
 
+#-------------------------------------------------------------------------------------------------------------------------------------
+
+set(SENSOR_LOGS_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/SensorLogs")
+
+file(MAKE_DIRECTORY ${SENSOR_LOGS_DIR})
+
+#-------------------------------------------------------------------------------------------------------------------------------------
+
 qt_add_executable(${PROJECT_NAME}
     main.cpp
 
@@ -48,8 +58,14 @@ qt_add_executable(${PROJECT_NAME}
     Models/SensorModel.h Models/SensorModel.cpp
     Models/ModelManager.h Models/ModelManager.cpp
 
-    DataMappers/SensorUnitProvider.h DataMappers/SensorUnitProvider.cpp
-    DataMappers/SensorPrecisionProvider.h DataMappers/SensorPrecisionProvider.cpp
+    Models/DataMappers/SensorUnitProvider.h  Models/DataMappers/SensorUnitProvider.cpp
+    Models/DataMappers/SensorPrecisionProvider.h  Models/DataMappers/SensorPrecisionProvider.cpp
+
+    Controllers/LanguageChooser.h Controllers/LanguageChooser.cpp
+    Controllers/SensorLogDatabase.h Controllers/SensorLogDatabase.cpp
+
+    Types/Sensor.h
+    Types/Hardware.h
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "HardwareMonitorClient")
@@ -83,8 +99,7 @@ qt_add_qml_module(${PROJECT_NAME}
         Qml/NetMenu.qml
         Qml/ViewMenu.qml
         Qml/OptionsMenu.qml
-        SOURCES DataMappers/LanguageChooser.h
-        SOURCES DataMappers/LanguageChooser.cpp
+        SOURCES Models/ModelManagerFactory.h
 )
 
 qt_add_resources(${PROJECT_NAME}

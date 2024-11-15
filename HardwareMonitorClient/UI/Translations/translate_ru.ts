@@ -27,7 +27,7 @@
         <translation>Логин</translation>
     </message>
     <message>
-        <location filename="../Qml/Main.qml" line="59"/>
+        <location filename="../Qml/Main.qml" line="60"/>
         <source>Hardwares</source>
         <translation>Устройства</translation>
     </message>
@@ -95,7 +95,7 @@
     <message>
         <location filename="../Qml/OptionsMenu.qml" line="31"/>
         <source>English</source>
-        <translation>Английский</translation>
+        <translation>English</translation>
     </message>
     <message>
         <location filename="../Qml/OptionsMenu.qml" line="40"/>
@@ -157,6 +157,16 @@
         <location filename="../Qml/ViewMenu.qml" line="24"/>
         <source>Max</source>
         <translation>Макс</translation>
+    </message>
+    <message>
+        <location filename="../Qml/ViewMenu.qml" line="38"/>
+        <source>Sensor logs</source>
+        <translation>Логи сенсоров</translation>
+    </message>
+    <message>
+        <location filename="../Qml/ViewMenu.qml" line="42"/>
+        <source>Log sensors</source>
+        <translation>Логировать сенсоры</translation>
     </message>
 </context>
 </TS>

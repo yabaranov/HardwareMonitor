@@ -33,4 +33,24 @@ Menu {
             }
         }
     }
+
+    Menu {
+        title: qsTr("Sensor logs")
+
+        CheckBox {
+            checked: AppSettings.logSensors
+            text: qsTr("Log sensors")
+            onCheckedChanged: {
+                AppSettings.logSensors = checked;
+                if(checked) {
+                    sensorLogDatabase.connectToQObject(netEngine);
+                    logger.info("Log sensors is enabled");
+                }
+                else {
+                    sensorLogDatabase.disconnectFromQObject(netEngine);
+                    logger.info("Log sensors is disabled");
+                }
+            }
+        }
+    }
 }
