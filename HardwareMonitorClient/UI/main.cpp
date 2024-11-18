@@ -5,12 +5,13 @@
 #include <QQmlContext>
 #include <QTranslator>
 
-#include "NetEngine.h"
-#include "Models/ModelManager.h"
+#include "NetClient.h"
 #include "Logger/Logger.h"
-#include "Controllers/LanguageChooser.h"
-#include "Controllers/SensorLogDatabase.h"
+#include "Translations/LanguageChooser.h"
+#include "SensorDatabase/SensorDatabase.h"
+#include "Models/HardwarePageModel.h"
 
+using namespace GrpcHardwareMonitor;
 
 int main(int argc, char *argv[])
 {
@@ -38,13 +39,11 @@ int main(int argc, char *argv[])
     LanguageChooser languageChooser(engine);
     engine.rootContext()->setContextProperty("languageChooser", &languageChooser);
 
-    SensorLogDatabase sensorLogDatabase;
-    ModelManager modelManager;
-    auto& netEngine = NetEngine::instance();
-    QObject::connect(&netEngine, &NetEngine::sensorTablesChanged, &modelManager, &ModelManager::onSensorTablesChanged);
-    engine.rootContext()->setContextProperty("netEngine", &netEngine);
-    engine.rootContext()->setContextProperty("sensorLogDatabase", &sensorLogDatabase);
-    engine.rootContext()->setContextProperty("modelManager", &modelManager);
+    auto& netClient = NetClient::instance();
+    engine.rootContext()->setContextProperty("netClient", &netClient);
+
+    qmlRegisterType<HardwarePageModel>("HardwarePageModel", 1, 0, "HardwarePageModel");
+    qmlRegisterType<SensorDatabase>("SensorDatabase", 1, 0, "SensorDatabase");
 
     engine.loadFromModule("UI", "Main");
 

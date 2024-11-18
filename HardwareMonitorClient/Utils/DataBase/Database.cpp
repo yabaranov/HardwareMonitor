@@ -2,7 +2,10 @@
 #include "sqlite3.h"
 #include "Logger/Logger.h"
 
-Database::Database() : m_db(nullptr) {}
+Database::Database(const std::string& dbPath) : m_db(nullptr)
+{
+    open(dbPath);
+}
 
 Database::~Database()
 {

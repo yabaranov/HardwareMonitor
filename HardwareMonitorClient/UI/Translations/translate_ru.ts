@@ -27,7 +27,7 @@
         <translation>Логин</translation>
     </message>
     <message>
-        <location filename="../Qml/Main.qml" line="60"/>
+        <location filename="../Qml/Main.qml" line="59"/>
         <source>Hardwares</source>
         <translation>Устройства</translation>
     </message>
@@ -106,22 +106,22 @@
 <context>
     <name>SensorTableRepeater</name>
     <message>
-        <location filename="../Qml/SensorTableRepeater.qml" line="20"/>
+        <location filename="../Qml/SensorTableRepeater.qml" line="21"/>
         <source>Sensor</source>
         <translation>Сенсор</translation>
     </message>
     <message>
-        <location filename="../Qml/SensorTableRepeater.qml" line="20"/>
+        <location filename="../Qml/SensorTableRepeater.qml" line="21"/>
         <source>Value</source>
         <translation>Значение</translation>
     </message>
     <message>
-        <location filename="../Qml/SensorTableRepeater.qml" line="20"/>
+        <location filename="../Qml/SensorTableRepeater.qml" line="21"/>
         <source>Min</source>
         <translation>Мин</translation>
     </message>
     <message>
-        <location filename="../Qml/SensorTableRepeater.qml" line="20"/>
+        <location filename="../Qml/SensorTableRepeater.qml" line="21"/>
         <source>Max</source>
         <translation>Макс</translation>
     </message>
@@ -159,12 +159,11 @@
         <translation>Макс</translation>
     </message>
     <message>
-        <location filename="../Qml/ViewMenu.qml" line="38"/>
         <source>Sensor logs</source>
-        <translation>Логи сенсоров</translation>
+        <translation type="vanished">Логи сенсоров</translation>
     </message>
     <message>
-        <location filename="../Qml/ViewMenu.qml" line="42"/>
+        <location filename="../Qml/ViewMenu.qml" line="40"/>
         <source>Log sensors</source>
         <translation>Логировать сенсоры</translation>
     </message>

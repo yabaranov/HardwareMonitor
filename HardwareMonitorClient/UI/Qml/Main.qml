@@ -37,42 +37,46 @@ ApplicationWindow {
         }
     }
 
-    HardwarePage {
-        id: hardwarePage
-        visible: false
-        header: ToolBar {
-            ToolButton {
-                id: buttonBack
-                anchors.left: parent.left
-                text: "<"
-                onClicked: {
-                    logger.info("Click back button")
-                    stackView.pop();
-                    netEngine.stopSensorThread();
-                    sensorLogDatabase.close();
-                    modelManager.destroyModels();
-                    logger.info("Pop hardware page")
+    Component {
+        id: hardwarePageComponent
+
+        HardwarePage {
+            header: ToolBar {
+                ToolButton {
+                    id: buttonBack
+                    anchors.left: parent.left
+                    text: "<"
+                    onClicked: {
+                        logger.info("Click back button")
+                        stackView.pop();
+                        logger.info("Pop hardware page")
+                        netClient.logout();                   
+                    }
+                }
+
+                CustomLabel {
+                    anchors.centerIn: parent
+                    text: qsTr("Hardwares")
                 }
             }
 
-            CustomLabel {
-                anchors.centerIn: parent
-                text: qsTr("Hardwares")
+            Connections {
+                target: netClient
+
+                function onNetworkError(errorString) {
+                    netClient.logout();
+                    stackView.pop();
+                }
             }
         }
     }
 
     Connections {
-        target: netEngine
+        target: netClient
 
-        function onAuth() {
-            logger.info("Successful authentication")
+        function onAuth(hardwareListInfo) {
             loginPage.connectingBar.visible = false;
-            modelManager.createModels(netEngine.getHardwareListInfo());
-            sensorLogDatabase.open("SensorLogs/" + AppSettings.serverAddress + "_" + AppSettings.portNumber + ".db");
-            sensorLogDatabase.createTables(netEngine.getHardwareListInfo());
-            netEngine.startSensorThread();
-            stackView.push(hardwarePage);
+            stackView.push(hardwarePageComponent, {"hardwareListInfo": hardwareListInfo});
             logger.info("Push hardware page")
         }
     }

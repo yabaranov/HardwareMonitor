@@ -54,7 +54,6 @@ message HardwareList {
 message None {}
 
 service HardwareService {
-    rpc checkAuthentication(None) returns (None) {}
     rpc getHardwareListInfo(None) returns (HardwareListInfo) {}	 
     rpc getHardwareList(None) returns (stream HardwareList){}
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QThread>
+#include <QObject>
 
 #include "HardwareService.qpb.h"
 
@@ -14,17 +14,18 @@ class Client;
 }
 }
 
-class SensorThread : public QThread
+class SensorTask : public QObject
 {
     Q_OBJECT
 public:
-    explicit SensorThread(GrpcHardwareMonitor::HardwareService::Client* client, QObject* parent = nullptr);
-    ~SensorThread() override = default;
-    void run() override;
+    explicit SensorTask(GrpcHardwareMonitor::HardwareService::Client* client);
 
 Q_SIGNALS:
     void networkError(const QString&);
     void sensorTablesChanged(const GrpcHardwareMonitor::HardwareList&);
+
+public Q_SLOTS:
+    void changeSensorTables();
 
 private:
     GrpcHardwareMonitor::HardwareService::Client* m_client;

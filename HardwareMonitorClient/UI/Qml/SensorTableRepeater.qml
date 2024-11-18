@@ -3,7 +3,8 @@ import QtQuick.Controls
 
 Repeater {
     id: root
-    model: parent.visible && modelManager ? modelManager.getHardwareModel().rowCount() : 0
+    property var hardwarePageModel
+    model: hardwarePageModel.getHardwareList().rowCount()
 
     property int selectedSensorTableIndex
 
@@ -17,7 +18,7 @@ Repeater {
             id: headerOfSensorTableView
             width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
-            model: root.visible ? [qsTr("Sensor"), qsTr("Value"), qsTr("Min"), qsTr("Max")] : null
+            model: [qsTr("Sensor"), qsTr("Value"), qsTr("Min"), qsTr("Max")]
             syncView: sensorTableView
         }
 
@@ -27,7 +28,7 @@ Repeater {
             width: parent.width
             height: parent.height
             anchors.horizontalCenter: parent.horizontalCenter
-            model: root.visible && modelManager ? modelManager.getSensorTable(localIndex) : null
+            model: hardwarePageModel.getSensorTable(localIndex)
         }
     }
 }

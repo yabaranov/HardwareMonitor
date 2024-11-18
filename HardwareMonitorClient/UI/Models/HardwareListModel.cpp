@@ -1,8 +1,8 @@
-#include "HardwareModel.h"
+#include "HardwareListModel.h"
 #include "HardwareService.qpb.h"
 #include "Types/Hardware.h"
 
-class HardwareModel::Impl
+class HardwareListModel::Impl
 {
 public:
     explicit Impl(const GrpcHardwareMonitor::HardwareInfoRepeated& hardwareInfos);
@@ -19,18 +19,18 @@ private:
     QList<Hardware> m_hardwares;
 };
 
-HardwareModel::Impl::Impl(const GrpcHardwareMonitor::HardwareInfoRepeated& hardwareList)
+HardwareListModel::Impl::Impl(const GrpcHardwareMonitor::HardwareInfoRepeated& hardwareList)
 {
     for(auto& hardware: hardwareList)
         m_hardwares.append(Hardware{.name = hardware.name()});
 }
 
-int HardwareModel::Impl::rowCount(const QModelIndex &parent) const
+int HardwareListModel::Impl::rowCount(const QModelIndex &parent) const
 {
     return static_cast<int>(m_hardwares.size());
 }
 
-QVariant HardwareModel::Impl::data(const QModelIndex &index, int role) const
+QVariant HardwareListModel::Impl::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid() || index.row() >= static_cast<int>(m_hardwares.size()))
         return QVariant();
@@ -43,23 +43,22 @@ QVariant HardwareModel::Impl::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-HardwareModel::HardwareModel(const GrpcHardwareMonitor::HardwareInfoRepeated& hardwareInfos, QObject *parent)
-    : QAbstractListModel(parent),
-      pImpl(std::make_unique<Impl>(hardwareInfos))
+HardwareListModel::HardwareListModel(const GrpcHardwareMonitor::HardwareInfoRepeated& hardwareInfos)
+    : pImpl(std::make_unique<Impl>(hardwareInfos))
 {
 }
 
-int HardwareModel::rowCount(const QModelIndex &parent) const
+int HardwareListModel::rowCount(const QModelIndex &parent) const
 {
     return pImpl->rowCount(parent);
 }
 
-QVariant HardwareModel::data(const QModelIndex &index, int role) const
+QVariant HardwareListModel::data(const QModelIndex &index, int role) const
 {
     return pImpl->data(index, role);
 }
 
-QHash<int, QByteArray> HardwareModel::roleNames() const
+QHash<int, QByteArray> HardwareListModel::roleNames() const
 {
     QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
     roles[pImpl->Name] = "name";
@@ -67,15 +66,15 @@ QHash<int, QByteArray> HardwareModel::roleNames() const
     return roles;
 }
 
-HardwareModel::~HardwareModel() = default;
+HardwareListModel::~HardwareListModel() = default;
 
-HardwareModel::HardwareModel(HardwareModel& rhs) : pImpl(nullptr)
+HardwareListModel::HardwareListModel(HardwareListModel& rhs) : pImpl(nullptr)
 {
     if(rhs.pImpl)
         pImpl = std::make_unique<Impl>(*rhs.pImpl);
 }
 
-HardwareModel& HardwareModel::operator=(HardwareModel& rhs)
+HardwareListModel& HardwareListModel::operator=(HardwareListModel& rhs)
 {
     if(!rhs.pImpl)
         pImpl.reset();
@@ -87,10 +86,10 @@ HardwareModel& HardwareModel::operator=(HardwareModel& rhs)
     return *this;
 }
 
-void HardwareModel::swap(HardwareModel& rhs) noexcept
+void HardwareListModel::swap(HardwareListModel& rhs) noexcept
 {
     using std::swap;
     swap(pImpl, rhs.pImpl);
 }
 
-void swap(HardwareModel& lhs, HardwareModel& rhs) noexcept {lhs.swap(rhs);}
+void swap(HardwareListModel& lhs, HardwareListModel& rhs) noexcept {lhs.swap(rhs);}

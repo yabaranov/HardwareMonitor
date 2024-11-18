@@ -2,7 +2,7 @@
 
 #include <QCoreApplication>
 
-LanguageChooser::LanguageChooser(QQmlApplicationEngine& engine, QObject *parent) : QObject(parent), m_engine(engine)
+LanguageChooser::LanguageChooser(QQmlApplicationEngine& engine) : m_engine(engine)
 {
 }
 

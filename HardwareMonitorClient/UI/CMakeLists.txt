@@ -35,7 +35,7 @@ else()
     qt6_add_translation(QM_FILES ${TS_FILES})
 endif()
 
-add_custom_target(Translations
+add_custom_target(Translation
     DEPENDS ${QM_FILES}
 )
 
@@ -54,18 +54,18 @@ file(MAKE_DIRECTORY ${SENSOR_LOGS_DIR})
 qt_add_executable(${PROJECT_NAME}
     main.cpp
 
-    Models/HardwareModel.h Models/HardwareModel.cpp
-    Models/SensorModel.h Models/SensorModel.cpp
-    Models/ModelManager.h Models/ModelManager.cpp
+    Models/HardwareListModel.h Models/HardwareListModel.cpp
+    Models/SensorTableModel.h Models/SensorTableModel.cpp
+    Models/HardwarePageModel.h Models/HardwarePageModel.cpp
+    Models/DataMappers/SensorUnitProvider.h Models/DataMappers/SensorUnitProvider.cpp
+    Models/DataMappers/SensorPrecisionProvider.h Models/DataMappers/SensorPrecisionProvider.cpp
 
-    Models/DataMappers/SensorUnitProvider.h  Models/DataMappers/SensorUnitProvider.cpp
-    Models/DataMappers/SensorPrecisionProvider.h  Models/DataMappers/SensorPrecisionProvider.cpp
+    Translations/LanguageChooser.h Translations/LanguageChooser.cpp
 
-    Controllers/LanguageChooser.h Controllers/LanguageChooser.cpp
-    Controllers/SensorLogDatabase.h Controllers/SensorLogDatabase.cpp
+    SensorDatabase/SensorDatabase.h SensorDatabase/SensorDatabase.cpp
+    SensorDatabase/SensorLogTask.h SensorDatabase/SensorLogTask.cpp
 
-    Types/Sensor.h
-    Types/Hardware.h
+    Types/Sensor.h Types/Hardware.h
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "HardwareMonitorClient")
@@ -99,7 +99,6 @@ qt_add_qml_module(${PROJECT_NAME}
         Qml/NetMenu.qml
         Qml/ViewMenu.qml
         Qml/OptionsMenu.qml
-        SOURCES Models/ModelManagerFactory.h
 )
 
 qt_add_resources(${PROJECT_NAME}
@@ -116,6 +115,10 @@ target_link_libraries(${PROJECT_NAME}
         Qt::QuickControls2
         Net
         Utils
+)
+
+add_custom_target(Deploy
+    COMMAND windeployqt6 --qmldir="${CMAKE_CURRENT_SOURCE_DIR}/Qml" $<TARGET_FILE:${PROJECT_NAME}>
 )
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)

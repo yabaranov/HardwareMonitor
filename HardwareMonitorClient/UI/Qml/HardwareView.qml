@@ -4,13 +4,14 @@ import QtQuick.Controls.Universal
 ListView {
     id: root
 
+    property var hardwareList
     property int selectedHardwareIndex
 
     onVisibleChanged: selectedHardwareIndex = 0
 
     highlight: Rectangle { color: Universal.accent; radius: 5 }
     highlightResizeDuration: 0
-    model: parent.visible && modelManager ? modelManager.getHardwareModel() : null
+    model: hardwareList
 
     delegate: Item {
         width: parent.width

@@ -47,7 +47,7 @@ Page {
 
             onClicked: {
                 connectingBar.visible = true;
-                netEngine.login("http://" + AppSettings.serverAddress + ":" + AppSettings.portNumber, loginField.text, passwordField.text);
+                netClient.login("http://" + AppSettings.serverAddress + ":" + AppSettings.portNumber, loginField.text, passwordField.text);
             }
         }
 
@@ -65,7 +65,7 @@ Page {
         }
 
         Connections {
-            target: netEngine
+            target: netClient
 
             function onNetworkError(errorString) {
                 logger.error("Network error: %1", [errorString])

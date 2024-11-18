@@ -9,7 +9,7 @@ Menu {
         text: qsTr("Reset Min/Max")
         onTriggered:
         {
-            modelManager.resetMinAndMax();
+            AppSettings.resetMinAndMax();
             logger.info("Reset min and max")
         }
     }
@@ -34,22 +34,12 @@ Menu {
         }
     }
 
-    Menu {
-        title: qsTr("Sensor logs")
-
+    MenuItem {
         CheckBox {
             checked: AppSettings.logSensors
             text: qsTr("Log sensors")
             onCheckedChanged: {
-                AppSettings.logSensors = checked;
-                if(checked) {
-                    sensorLogDatabase.connectToQObject(netEngine);
-                    logger.info("Log sensors is enabled");
-                }
-                else {
-                    sensorLogDatabase.disconnectFromQObject(netEngine);
-                    logger.info("Log sensors is disabled");
-                }
+                AppSettings.setLogSensors(checked);
             }
         }
     }

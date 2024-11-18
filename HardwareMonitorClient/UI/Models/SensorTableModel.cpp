@@ -1,4 +1,4 @@
-#include "SensorModel.h"
+#include "SensorTableModel.h"
 
 #include "DataMappers/SensorPrecisionProvider.h"
 #include "DataMappers/SensorUnitProvider.h"
@@ -6,7 +6,7 @@
 #include <ranges>
 #include <algorithm>
 
-SensorModel::SensorModel(const GrpcHardwareMonitor::SensorInfoRepeated& sensorInfos, QObject* parent) : QAbstractTableModel(parent)
+SensorTableModel::SensorTableModel(const GrpcHardwareMonitor::SensorInfoRepeated& sensorInfos)
 {
     for(auto& sensorInfo: sensorInfos)
         m_sensors.append(Sensor{.name = sensorInfo.name(),
@@ -14,19 +14,19 @@ SensorModel::SensorModel(const GrpcHardwareMonitor::SensorInfoRepeated& sensorIn
                                 .precision = SensorPrecisionProvider::getPrecision(sensorInfo.type())});
 }
 
-int SensorModel::rowCount(const QModelIndex &parent) const
+int SensorTableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return static_cast<int>(m_sensors.size());
 }
 
-int SensorModel::columnCount(const QModelIndex &parent) const
+int SensorTableModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return NUMBER_OF_COLUMNS;
 }
 
-QVariant SensorModel::data(const QModelIndex &index, int role) const
+QVariant SensorTableModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -60,7 +60,7 @@ QVariant SensorModel::data(const QModelIndex &index, int role) const
     }
 }
 
-QHash<int, QByteArray> SensorModel::roleNames() const
+QHash<int, QByteArray> SensorTableModel::roleNames() const
 {
     QHash<int, QByteArray> roles = QAbstractTableModel::roleNames();
     roles[Name] = "name";
@@ -71,7 +71,7 @@ QHash<int, QByteArray> SensorModel::roleNames() const
     return roles;
 }
 
-void SensorModel::changeSensorTable(const GrpcHardwareMonitor::SensorRepeated& sensors)
+void SensorTableModel::changeSensorTable(const GrpcHardwareMonitor::SensorRepeated& sensors)
 {
     for(auto&& [i, sensor] : std::views::enumerate(sensors))
     {
@@ -95,7 +95,7 @@ void SensorModel::changeSensorTable(const GrpcHardwareMonitor::SensorRepeated& s
     }
 }
 
-void SensorModel::resetMinAndMax()
+void SensorTableModel::resetMinAndMax()
 {
     for(auto&& [i, sensor] : std::views::enumerate(m_sensors))
     {
@@ -109,10 +109,10 @@ void SensorModel::resetMinAndMax()
     }
 }
 
-void SensorModel::swap(SensorModel& rhs) noexcept
+void SensorTableModel::swap(SensorTableModel& rhs) noexcept
 {
     using std::swap;
     swap(m_sensors, rhs.m_sensors);
 }
 
-void swap(SensorModel& lhs, SensorModel& rhs) noexcept {lhs.swap(rhs);}
+void swap(SensorTableModel& lhs, SensorTableModel& rhs) noexcept {lhs.swap(rhs);}

@@ -8,7 +8,7 @@ class LanguageChooser : public QObject
 {
     Q_OBJECT
 public:
-    explicit LanguageChooser(QQmlApplicationEngine& engine, QObject *parent = nullptr);
+    explicit LanguageChooser(QQmlApplicationEngine& engine);
 
     Q_INVOKABLE bool setLanguage(const QString& languageCode);
 

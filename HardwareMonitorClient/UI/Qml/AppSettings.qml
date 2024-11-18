@@ -7,7 +7,15 @@ Settings {
     property string serverAddress: "localhost"
     property string portNumber: "65000"
     property string languageCode: "en"
+
     property bool logSensors: false
+    signal logSensorsModified()
+    function setLogSensors(value) {
+        if (logSensors !== value) {
+            logSensors = value;
+            logSensorsModified();
+        }
+    }
 
     property list<bool> columnVisibility: [true, true, true]
     signal columnVisibilityModified()
@@ -16,5 +24,8 @@ Settings {
             columnVisibility[index] = value;
             columnVisibilityModified();
         }
-    }   
+    }
+
+    signal resetMinAndMax()
+
 }
