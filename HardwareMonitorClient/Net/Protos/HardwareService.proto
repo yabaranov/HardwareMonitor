@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package GrpcHardwareMonitor;
+
+message SensorInfo {
+    enum SensorType {        
+        Voltage = 0;
+        Current = 1;
+        Power = 2; 
+        Clock = 3; 
+        Temperature = 4;  
+        Load = 5; 
+        Frequency = 6;  
+        Fan = 7;  
+        Flow = 8;  
+        Control = 9; 
+        Level = 10;  
+        Factor = 11; 
+        Data = 12;  
+        SmallData = 13;  
+        Throughput = 14; 
+        TimeSpan = 15; 
+        Energy = 16;  
+        Noise = 17;  
+        Conductivity = 18; 
+        Humidity = 19;
+        Unknown = 20;
+    };
+    SensorType type = 1;
+	string name = 2;      
+}
+
+message HardwareInfo {
+    string name = 1;
+    repeated SensorInfo sensorInfos = 2;
+}
+
+message HardwareListInfo {
+    repeated HardwareInfo hardwareInfos = 1;
+}
+
+message Sensor {
+    float value = 1;    
+}
+
+message Hardware {   
+    repeated Sensor sensors = 1;
+}
+
+message HardwareList {
+    repeated Hardware hardwares = 1;
+}
+
+message None {}
+
+service HardwareService {
+    rpc getHardwareListInfo(None) returns (HardwareListInfo) {}	 
+    rpc getHardwareList(None) returns (stream HardwareList){}
+}
