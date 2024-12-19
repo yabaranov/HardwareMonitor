@@ -24,84 +24,70 @@ void NetClient::login(const QUrl& hostUri, const QString &name, const QString &p
 {
     m_client = std::make_unique<GrpcHardwareMonitor::HardwareService::Client>();
 
-    //QHash<QByteArray, QByteArray> metadata =
-    //    {
-    //        { "user-name", { name.toUtf8() } },
-    //        { "user-password", { password.toUtf8() } },
-    //    };
+    QHash<QByteArray, QByteArray> metadata =
+        {
+            { "Login", { name.toUtf8() } },
+            { "Password", { password.toUtf8() } },
+        };
+    QGrpcChannelOptions channelOptions;
+    channelOptions.setMetadata(metadata);
 
-    //QGrpcChannelOptions channelOptions;
-    //channelOptions.setMetadata(metadata);
+    std::shared_ptr<QAbstractGrpcChannel> channel = std::make_shared<QGrpcHttp2Channel>(hostUri, channelOptions);
+    m_client->attachChannel(channel);
 
-    //std::shared_ptr<QAbstractGrpcChannel> channel = std::make_shared<QGrpcHttp2Channel>(hostUri, channelOptions);
+    std::shared_ptr<QGrpcCallReply> replyHardwareListInfo = m_client->getHardwareListInfo(GrpcHardwareMonitor::None());
+    connect(replyHardwareListInfo.get(), &QGrpcCallReply::finished, this, [replyHardwareListInfo, this] (const QGrpcStatus &status)
+        {
+            if (status.code() == QtGrpc::StatusCode::Ok)
+            {
+                auto hardwareListInfo = std::make_unique<GrpcHardwareMonitor::HardwareListInfo>();
+                if(const auto hardwareListInfoResponse = replyHardwareListInfo->read<GrpcHardwareMonitor::HardwareListInfo>())
+                    *hardwareListInfo = *hardwareListInfoResponse;
 
-    //m_client->attachChannel(channel);
-    //std::shared_ptr<QGrpcCallReply> replyCheckAuthentication = m_client->checkAuthentication(GrpcHardwareMonitor::None());
+                Logger::instance().info("Successful authentication");
+                startSensorThread();
+                emit auth(hardwareListInfo.get());
+            }
+            else if (status.code() == QtGrpc::StatusCode::Unauthenticated)
+                emit networkError("This username with this password doesn't exists.");
+            else
+                emit networkError(status.message());
+        },
+        Qt::SingleShotConnection
+    );
 
-    //connect(replyCheckAuthentication.get(), &QGrpcCallReply::finished, this,
-    //    [replyCheckAuthentication, this] (const QGrpcStatus &status)
-    //    {
-    //        if (status.code() == QtGrpc::StatusCode::Ok)
-    //            emit auth();
-    //        else if (status.code() == QtGrpc::StatusCode::Unauthenticated)
-    //            emit networkError("This username with this password doesn't exists.");
-    //        else
-    //            emit networkError(status.message());
-    //    },
-    //    Qt::SingleShotConnection
-    //);
+    //GrpcHardwareMonitor::HardwareInfoRepeated hardwares;
 
-    //std::shared_ptr<QGrpcCallReply> replyHardwareStructure = m_client->getHardwareStructure(GrpcHardwareMonitor::None());
+    //GrpcHardwareMonitor::SensorInfoRepeated sensors1;
+    //GrpcHardwareMonitor::SensorInfo sensor1;
+    //sensor1.setName("Clock1");
+    //sensor1.setType(GrpcHardwareMonitor::SensorInfo::SensorType::Clock);
+    //sensors1.append(sensor1);
 
-    //GrpcHardwareMonitor::HardwareStructure hardwareStructure;
+    //GrpcHardwareMonitor::HardwareInfo hardware1;
+    //hardware1.setName("Cpu1");
+    //hardware1.setSensorInfos(sensors1);
+    //hardwares.append(hardware1);
 
-    //connect(replyHardwareStructure.get(), &QGrpcCallReply::finished, this, [replyHardwareStructure, &hardwareStructure, this] (const QGrpcStatus &status)
-    //    {
-    //        if (status.code() == QtGrpc::StatusCode::Ok)
-    //        {
-    //            if(const auto hardwareStructureResponse = replyHardwareStructure->read<GrpcHardwareMonitor::HardwareStructure>())
-    //                hardwareStructure = *hardwareStructureResponse;
-    //        }
-    //        else if(status.code() != QtGrpc::StatusCode::Ok)
-    //            emit networkError(status.message());
-    //    },
-    //    Qt::SingleShotConnection
-    //);
+    //GrpcHardwareMonitor::SensorInfoRepeated sensors2;
+    //GrpcHardwareMonitor::SensorInfo sensor2;
+    //sensor2.setName("Clock2");
+    //sensor2.setType(GrpcHardwareMonitor::SensorInfo::SensorType::Clock);
+    //sensors2.append(sensor2);
 
-    //return hardwareStructure;
+    //GrpcHardwareMonitor::HardwareInfo hardware2;
+    //hardware2.setName("Cpu2");
+    //hardware2.setSensorInfos(sensors2);
+    //hardwares.append(hardware2);
 
-    GrpcHardwareMonitor::HardwareInfoRepeated hardwares;
+    //auto hardwareListInfo = std::make_unique<GrpcHardwareMonitor::HardwareListInfo>();
+    //hardwareListInfo->setHardwareInfos(hardwares);
 
-    GrpcHardwareMonitor::SensorInfoRepeated sensors1;
-    GrpcHardwareMonitor::SensorInfo sensor1;
-    sensor1.setName("Clock1");
-    sensor1.setType(GrpcHardwareMonitor::SensorInfo::SensorType::Clock);
-    sensors1.append(sensor1);
+    //Logger::instance().info("Successful authentication");
+    //startSensorThread();
+    //emit auth(hardwareListInfo.get());
 
-    GrpcHardwareMonitor::HardwareInfo hardware1;
-    hardware1.setName("Cpu1");
-    hardware1.setSensorInfos(sensors1);
-    hardwares.append(hardware1);
-
-    GrpcHardwareMonitor::SensorInfoRepeated sensors2;
-    GrpcHardwareMonitor::SensorInfo sensor2;
-    sensor2.setName("Clock2");
-    sensor2.setType(GrpcHardwareMonitor::SensorInfo::SensorType::Clock);
-    sensors2.append(sensor2);
-
-    GrpcHardwareMonitor::HardwareInfo hardware2;
-    hardware2.setName("Cpu2");
-    hardware2.setSensorInfos(sensors2);
-    hardwares.append(hardware2);
-
-    auto hardwareListInfo = std::make_unique<GrpcHardwareMonitor::HardwareListInfo>();
-    hardwareListInfo->setHardwareInfos(hardwares);
-
-    Logger::instance().info("Successful authentication");
-    startSensorThread();
-    emit auth(hardwareListInfo.get());
-
-    //emit networkError("This username with this password doesn't exists.");
+    ////emit networkError("This username with this password doesn't exists.");
 }
 
 Q_INVOKABLE void NetClient::logout()
@@ -122,6 +108,7 @@ void NetClient::startSensorThread()
             &NetClient::sensorTablesChanged);
 
     m_sensorThread->start();
+    m_sensorTask->changeSensorTables();
     Logger::instance().info("Start sensor thread");
 }
 

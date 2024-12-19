@@ -29,6 +29,4 @@ public Q_SLOTS:
 
 private:
     GrpcHardwareMonitor::HardwareService::Client* m_client;
-    QTimer m_timer;
-    int i{0};
 };

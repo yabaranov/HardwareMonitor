@@ -1,0 +1,2 @@
+obj\Debug\net8.0\Protos/HardwareService.cs \
+obj\Debug\net8.0\Protos/HardwareServiceGrpc.cs: Protos/HardwareService.proto

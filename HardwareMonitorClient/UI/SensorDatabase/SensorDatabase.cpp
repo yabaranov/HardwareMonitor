@@ -2,6 +2,8 @@
 #include "Logger/Logger.h"
 #include "SensorLogTask.h"
 
+#include <QRegularExpression>
+
 SensorDatabase::~SensorDatabase()
 {
     stopSensorLogThread();
@@ -20,11 +22,13 @@ void SensorDatabase::createTables(GrpcHardwareMonitor::HardwareListInfo* hardwar
 {
     for (const auto& hardwareInfo : hardwareListInfo->hardwareInfos())
     {
+        auto tableName = hardwareInfo.name();
+        tableName.replace(QRegularExpression("[ \\(\\)]"), "_");
         QString createTableQuery = QString("CREATE TABLE IF NOT EXISTS %1 ("
                                            "timestamp DATETIME, "
                                            "sensor_name TEXT, "
                                            "value REAL, "
-                                           "UNIQUE(timestamp, sensor_name))").arg(hardwareInfo.name());
+                                           "UNIQUE(timestamp, sensor_name))").arg(tableName);
 
         m_database->execute(createTableQuery.toStdString());
     }

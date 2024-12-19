@@ -13,12 +13,12 @@ qt_add_library(${PROJECT_NAME} STATIC
 
 qt_add_protobuf(${PROJECT_NAME}
     PROTO_FILES
-        ../../protos/HardwareService.proto
+        Protos/HardwareService.proto
 )
 
 qt_add_grpc(${PROJECT_NAME} CLIENT
     PROTO_FILES
-        ../../protos/HardwareService.proto
+        Protos/HardwareService.proto
 )
 
 target_link_libraries(${PROJECT_NAME}

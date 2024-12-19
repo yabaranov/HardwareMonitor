@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "780v2G0MMgCSsYNdyW65a/LoTDfzBF6t0G4dgGNazsI=",
+  "Source": "HardwareMonitorServer",
+  "BasePath": "_content/HardwareMonitorServer",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

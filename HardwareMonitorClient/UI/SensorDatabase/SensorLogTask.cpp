@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <ranges>
+#include <QRegularExpression>
 
 SensorLogTask::SensorLogTask(Database* database, GrpcHardwareMonitor::HardwareListInfo* hardwareListInfo)
     : m_database(std::move(database))
@@ -10,6 +11,7 @@ SensorLogTask::SensorLogTask(Database* database, GrpcHardwareMonitor::HardwareLi
     for (const auto& hardwareInfo : hardwareListInfo->hardwareInfos())
     {
         QString tableName = hardwareInfo.name();
+        tableName.replace(QRegularExpression("[ \\(\\)]"), "_");
         m_hardwaredNames.append(tableName);
 
         QList<QString> sensorNames;
