@@ -8,6 +8,7 @@ using Grpc.Core;
 using GrpcHardwareMonitor;
 using LibreHardwareMonitor.Hardware;
 using System.Globalization;
+using System.Net;
 
 namespace HardwareMonitorServer
 {
@@ -24,18 +25,27 @@ namespace HardwareMonitorServer
                 return;
             }
 
+            var host = Dns.GetHostAddresses(Dns.GetHostName())
+                        .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)?.ToString();
+
+            if (string.IsNullOrEmpty(host))
+            {
+                Console.WriteLine("Unable to determine the host IP address. Exiting.");
+                return;
+            }
+
             var hardwareService = new HardwareServiceImpl(ConnectionString);
 
             var server = new Grpc.Core.Server
             {
                 Services = { HardwareService.BindService(hardwareService) },
-                Ports = { new ServerPort("localhost", port, ServerCredentials.Insecure) }
+                Ports = { new ServerPort(host, port, ServerCredentials.Insecure) }
             };
 
             server.Start();
             hardwareService.StartSendingHardwareUpdates();
 
-            Console.WriteLine($"Server started on port {port}");
+            Console.WriteLine($"Server started on {host}:{port}");
 
             Console.ReadKey();
             server.ShutdownAsync().Wait();
