@@ -1,16 +1,29 @@
 using Grpc.Core;
 using GrpcHardwareMonitor;
-using HardwareMonitorServer;
 using System.Text.Json;
 
  public class HardwareServiceImpl : HardwareService.HardwareServiceBase
 {
     private readonly ILogger<HardwareServiceImpl> _logger;
     private readonly string _userCredentialsFile = "user_credentials.json";
+
+    LibreHardwareMonitor.Hardware.Computer computer;
+    UpdateVisitor updateVisitor;
     public HardwareServiceImpl(ILogger<HardwareServiceImpl> logger)
      {
          _logger = logger;
-     }
+        computer = new LibreHardwareMonitor.Hardware.Computer
+        {
+            IsCpuEnabled = true,
+            IsGpuEnabled = true,
+            IsMemoryEnabled = true,
+            IsStorageEnabled = true
+        };
+        computer.Open();
+
+        updateVisitor = new UpdateVisitor();
+
+    }
 
     public override Task<HardwareListInfo> getHardwareListInfo(None request, ServerCallContext context)
     {
@@ -35,16 +48,8 @@ using System.Text.Json;
     private HardwareListInfo GetHardwareListInfo()
     {
         var hardwareListInfo = new HardwareListInfo();
-        LibreHardwareMonitor.Hardware.Computer computer = new LibreHardwareMonitor.Hardware.Computer
-        {
-            IsCpuEnabled = true,
-            IsGpuEnabled = true,
-            IsMemoryEnabled = true,
-            IsStorageEnabled = true
-        };
 
-        computer.Open();
-        computer.Accept(new UpdateVisitor());
+        computer.Accept(updateVisitor);
 
         foreach (LibreHardwareMonitor.Hardware.IHardware hardware in computer.Hardware)
         {
@@ -60,23 +65,14 @@ using System.Text.Json;
             hardwareListInfo.HardwareInfos.Add(hardwareInfo);
         }
 
-        computer.Close();
         return hardwareListInfo;
     }
 
     private HardwareList GetHardwareList()
     {
         var hardwareList = new HardwareList();
-        LibreHardwareMonitor.Hardware.Computer computer = new LibreHardwareMonitor.Hardware.Computer
-        {
-            IsCpuEnabled = true,
-            IsGpuEnabled = true,
-            IsMemoryEnabled = true,
-            IsStorageEnabled = true
-        };
 
-        computer.Open();
-        computer.Accept(new UpdateVisitor());
+        computer.Accept(updateVisitor);
 
         foreach (LibreHardwareMonitor.Hardware.IHardware hardware in computer.Hardware)
         {
@@ -91,7 +87,6 @@ using System.Text.Json;
             hardwareList.Hardwares.Add(hardwareEntry);
         }
 
-        computer.Close();
         return hardwareList;
     }
 

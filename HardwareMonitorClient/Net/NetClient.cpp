@@ -77,6 +77,11 @@ void NetClient::startSensorThread()
 
 void NetClient::stopSensorThread()
 {
+    //disconnect(m_sensorTask.get(), &SensorTask::networkError, this,
+    //           &NetClient::networkError);
+    //disconnect(m_sensorTask.get(), &SensorTask::sensorTablesChanged, this,
+    //           &NetClient::sensorTablesChanged);
+
     m_sensorTask.reset();
 
     Logger::instance().info("Stop sensor thread");
