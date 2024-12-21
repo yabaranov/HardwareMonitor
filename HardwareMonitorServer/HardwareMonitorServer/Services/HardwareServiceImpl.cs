@@ -1,162 +1,113 @@
 using Grpc.Core;
 using GrpcHardwareMonitor;
-using LibreHardwareMonitor.Hardware;
-using System.Data.SQLite;
+using HardwareMonitorServer;
+using System.Text.Json;
 
-namespace HardwareMonitorServer
+ public class HardwareServiceImpl : HardwareService.HardwareServiceBase
 {
-    public class HardwareServiceImpl : HardwareService.HardwareServiceBase
+    private readonly ILogger<HardwareServiceImpl> _logger;
+    private readonly string _userCredentialsFile = "user_credentials.json";
+    public HardwareServiceImpl(ILogger<HardwareServiceImpl> logger)
+     {
+         _logger = logger;
+     }
+
+    public override Task<HardwareListInfo> getHardwareListInfo(None request, ServerCallContext context)
     {
-        private readonly Dictionary<string, string> _users;
-        private readonly List<IServerStreamWriter<GrpcHardwareMonitor.HardwareList>> _clients;
-        private readonly object _clientsLock = new object();
-
-        public HardwareServiceImpl(string connectionString)
+        if (!ValidateCredentials(context))
         {
-            _users = LoadUsersFromDatabase(connectionString);
-            _clients = new List<IServerStreamWriter<GrpcHardwareMonitor.HardwareList>>();
+            throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid username or password."));
         }
 
-        private Dictionary<string, string> LoadUsersFromDatabase(string connectionString)
+        return Task.FromResult(GetHardwareListInfo());
+    }
+
+    public override Task<HardwareList> getHardwareList(None request, ServerCallContext context)
+    {
+        if (!ValidateCredentials(context))
         {
-            var users = new Dictionary<string, string>();
-            using var connection = new SQLiteConnection(connectionString);
-            connection.Open();
-
-            using var command = new SQLiteCommand("SELECT Login, Password FROM Users", connection);
-            using var reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                users[reader.GetString(0)] = reader.GetString(1);
-            }
-
-            return users;
+            throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid username or password."));
         }
 
-        public override Task<GrpcHardwareMonitor.HardwareListInfo> getHardwareListInfo(None request, ServerCallContext context)
+        return Task.FromResult(GetHardwareList());
+    }
+
+    private HardwareListInfo GetHardwareListInfo()
+    {
+        var hardwareListInfo = new HardwareListInfo();
+        LibreHardwareMonitor.Hardware.Computer computer = new LibreHardwareMonitor.Hardware.Computer
         {
-            if (!Authenticate(context))
-            {
-                throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid login or password"));
-            }
+            IsCpuEnabled = true,
+            IsGpuEnabled = true,
+            IsMemoryEnabled = true,
+            IsStorageEnabled = true
+        };
 
-            var hardwareListInfo = new GrpcHardwareMonitor.HardwareListInfo();
-            var computer = new Computer
-            {
-                IsCpuEnabled = true,
-                IsGpuEnabled = true,
-                IsMemoryEnabled = true
-            };
+        computer.Open();
+        computer.Accept(new UpdateVisitor());
 
-            computer.Open();
-            computer.Accept(new UpdateVisitor());
-
-            foreach (var hardware in computer.Hardware)
+        foreach (LibreHardwareMonitor.Hardware.IHardware hardware in computer.Hardware)
+        {
+            var hardwareInfo = new HardwareInfo { Name = hardware.Name };
+            foreach (LibreHardwareMonitor.Hardware.ISensor sensor in hardware.Sensors)
             {
-                var hardwareInfo = new GrpcHardwareMonitor.HardwareInfo { Name = hardware.Name };
-                foreach (var sensor in hardware.Sensors)
+                hardwareInfo.SensorInfos.Add(new SensorInfo
                 {
-                    hardwareInfo.SensorInfos.Add(new GrpcHardwareMonitor.SensorInfo { Name = sensor.Name, Type = (GrpcHardwareMonitor.SensorInfo.Types.SensorType)sensor.SensorType });
-                }
-                hardwareListInfo.HardwareInfos.Add(hardwareInfo);
+                    Name = sensor.Name,
+                    Type = (SensorInfo.Types.SensorType)Enum.Parse(typeof(SensorInfo.Types.SensorType), sensor.SensorType.ToString(), true)
+                });
             }
-
-            computer.Close();
-
-            return Task.FromResult(hardwareListInfo);
+            hardwareListInfo.HardwareInfos.Add(hardwareInfo);
         }
 
-        public override async Task getHardwareList(None request, IServerStreamWriter<GrpcHardwareMonitor.HardwareList> responseStream, ServerCallContext context)
-        {
-            lock (_clientsLock)
-            {
-                _clients.Add(responseStream);
-            }
+        computer.Close();
+        return hardwareListInfo;
+    }
 
-            try
+    private HardwareList GetHardwareList()
+    {
+        var hardwareList = new HardwareList();
+        LibreHardwareMonitor.Hardware.Computer computer = new LibreHardwareMonitor.Hardware.Computer
+        {
+            IsCpuEnabled = true,
+            IsGpuEnabled = true,
+            IsMemoryEnabled = true,
+            IsStorageEnabled = true
+        };
+
+        computer.Open();
+        computer.Accept(new UpdateVisitor());
+
+        foreach (LibreHardwareMonitor.Hardware.IHardware hardware in computer.Hardware)
+        {
+            var hardwareEntry = new Hardware();
+            foreach (LibreHardwareMonitor.Hardware.ISensor sensor in hardware.Sensors)
             {
-                // Keep the stream open
-                await Task.Delay(Timeout.Infinite, context.CancellationToken);
-            }
-            catch (TaskCanceledException)
-            {
-                // Client disconnected
-            }
-            finally
-            {
-                lock (_clientsLock)
+                hardwareEntry.Sensors.Add(new Sensor
                 {
-                    _clients.Remove(responseStream);
-                }
+                    Value = sensor.Value ?? 0.0f
+                });
             }
+            hardwareList.Hardwares.Add(hardwareEntry);
         }
 
-        public void StartSendingHardwareUpdates()
+        computer.Close();
+        return hardwareList;
+    }
+
+    private bool ValidateCredentials(ServerCallContext context)
+    {
+        var metadata = context.RequestHeaders;
+        string username = metadata.GetValue("Login");
+        string password = metadata.GetValue("Password");
+
+        if (File.Exists(_userCredentialsFile))
         {
-            Task.Run(async () =>
-            {
-                while (true)
-                {
-                    List<IServerStreamWriter<GrpcHardwareMonitor.HardwareList>> clientsCopy;
-                    lock (_clientsLock)
-                    {
-                        clientsCopy = new List<IServerStreamWriter<GrpcHardwareMonitor.HardwareList>>(_clients);
-                    }
-
-                    var hardwareList = new GrpcHardwareMonitor.HardwareList();
-                    var computer = new Computer
-                    {
-                        IsCpuEnabled = true,
-                        IsGpuEnabled = true,
-                        IsMemoryEnabled = true
-                    };
-
-                    computer.Open();
-                    computer.Accept(new UpdateVisitor());
-
-                    foreach (var hardware in computer.Hardware)
-                    {
-                        var hardwareData = new GrpcHardwareMonitor.Hardware();
-                        foreach (var sensor in hardware.Sensors)
-                        {
-                            if (sensor.Value.HasValue)
-                            {
-                                hardwareData.Sensors.Add(new GrpcHardwareMonitor.Sensor { Value = sensor.Value.Value });
-                            }
-                        }
-                        hardwareList.Hardwares.Add(hardwareData);
-                    }
-
-                    computer.Close();
-
-                    foreach (var client in clientsCopy)
-                    {
-                        try
-                        {
-                            await client.WriteAsync(hardwareList);
-                        }
-                        catch
-                        {
-                            lock (_clientsLock)
-                            {
-                                _clients.Remove(client);
-                            }
-                        }
-                    }
-
-                    await Task.Delay(1000);
-                }
-            });
+            var users = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(_userCredentialsFile));
+            return users != null && users.TryGetValue(username, out var storedPassword) && storedPassword == password;
         }
 
-        private bool Authenticate(ServerCallContext context)
-        {
-            var metadata = context.RequestHeaders;
-            var login = metadata.FirstOrDefault(m => m.Key == "login")?.Value;
-            var password = metadata.FirstOrDefault(m => m.Key == "password")?.Value;
-
-            return login != null && password != null && _users.TryGetValue(login, out var storedPassword) && storedPassword == password;
-        }
+        return false;
     }
 }
+

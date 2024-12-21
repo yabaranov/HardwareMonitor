@@ -55,39 +55,6 @@ void NetClient::login(const QUrl& hostUri, const QString &name, const QString &p
         },
         Qt::SingleShotConnection
     );
-
-    //GrpcHardwareMonitor::HardwareInfoRepeated hardwares;
-
-    //GrpcHardwareMonitor::SensorInfoRepeated sensors1;
-    //GrpcHardwareMonitor::SensorInfo sensor1;
-    //sensor1.setName("Clock1");
-    //sensor1.setType(GrpcHardwareMonitor::SensorInfo::SensorType::Clock);
-    //sensors1.append(sensor1);
-
-    //GrpcHardwareMonitor::HardwareInfo hardware1;
-    //hardware1.setName("Cpu1");
-    //hardware1.setSensorInfos(sensors1);
-    //hardwares.append(hardware1);
-
-    //GrpcHardwareMonitor::SensorInfoRepeated sensors2;
-    //GrpcHardwareMonitor::SensorInfo sensor2;
-    //sensor2.setName("Clock2");
-    //sensor2.setType(GrpcHardwareMonitor::SensorInfo::SensorType::Clock);
-    //sensors2.append(sensor2);
-
-    //GrpcHardwareMonitor::HardwareInfo hardware2;
-    //hardware2.setName("Cpu2");
-    //hardware2.setSensorInfos(sensors2);
-    //hardwares.append(hardware2);
-
-    //auto hardwareListInfo = std::make_unique<GrpcHardwareMonitor::HardwareListInfo>();
-    //hardwareListInfo->setHardwareInfos(hardwares);
-
-    //Logger::instance().info("Successful authentication");
-    //startSensorThread();
-    //emit auth(hardwareListInfo.get());
-
-    ////emit networkError("This username with this password doesn't exists.");
 }
 
 Q_INVOKABLE void NetClient::logout()
@@ -99,34 +66,18 @@ Q_INVOKABLE void NetClient::logout()
 void NetClient::startSensorThread()
 {
     m_sensorTask = std::make_unique<SensorTask>(m_client.get());
-    m_sensorThread = std::make_unique<QThread>();
-    m_sensorTask->moveToThread(m_sensorThread.get());
 
     connect(m_sensorTask.get(), &SensorTask::networkError, this,
             &NetClient::networkError);
     connect(m_sensorTask.get(), &SensorTask::sensorTablesChanged, this,
             &NetClient::sensorTablesChanged);
 
-    m_sensorThread->start();
-    m_sensorTask->changeSensorTables();
     Logger::instance().info("Start sensor thread");
 }
 
 void NetClient::stopSensorThread()
 {
-    if (m_sensorThread && m_sensorThread->isRunning())
-    {
-        m_sensorThread->quit();
-        m_sensorThread->wait();
-
-        disconnect(m_sensorTask.get(), &SensorTask::networkError, this,
-                &NetClient::networkError);
-        disconnect(m_sensorTask.get(), &SensorTask::sensorTablesChanged, this,
-                &NetClient::sensorTablesChanged);
-
-        m_sensorThread.reset();
-        m_sensorTask.reset();
-    }
+    m_sensorTask.reset();
 
     Logger::instance().info("Stop sensor thread");
 }

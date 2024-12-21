@@ -55,5 +55,5 @@ message None {}
 
 service HardwareService {
     rpc getHardwareListInfo(None) returns (HardwareListInfo) {}	 
-    rpc getHardwareList(None) returns (stream HardwareList){}
+    rpc getHardwareList(None) returns (HardwareList){}
 }

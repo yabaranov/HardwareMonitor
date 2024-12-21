@@ -41,6 +41,5 @@ private:
     void stopSensorThread();
 
     std::unique_ptr<GrpcHardwareMonitor::HardwareService::Client> m_client;
-    std::unique_ptr<QThread> m_sensorThread;
     std::unique_ptr<SensorTask> m_sensorTask;
 };

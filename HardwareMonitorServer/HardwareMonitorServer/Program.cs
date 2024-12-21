@@ -1,54 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Grpc.Core;
-using GrpcHardwareMonitor;
-using LibreHardwareMonitor.Hardware;
-using System.Globalization;
-using System.Net;
+var builder = WebApplication.CreateBuilder(args);
 
-namespace HardwareMonitorServer
-{
-    class Program
-    {
-        const string ConnectionString = "Data Source=users.db;Version=3;";
+// Add services to the container.
+builder.Services.AddGrpc();
 
-        static void Main(string[] args)
-        {
-            Console.Write("Enter the port number: ");
-            if (!int.TryParse(Console.ReadLine(), out int port) || port <= 0 || port > 65535)
-            {
-                Console.WriteLine("Invalid port number. Exiting.");
-                return;
-            }
+var app = builder.Build();
 
-            var host = Dns.GetHostAddresses(Dns.GetHostName())
-                        .FirstOrDefault(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)?.ToString();
+// Configure the HTTP request pipeline.
+app.MapGrpcService<HardwareServiceImpl>();
+app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
-            if (string.IsNullOrEmpty(host))
-            {
-                Console.WriteLine("Unable to determine the host IP address. Exiting.");
-                return;
-            }
-
-            var hardwareService = new HardwareServiceImpl(ConnectionString);
-
-            var server = new Grpc.Core.Server
-            {
-                Services = { HardwareService.BindService(hardwareService) },
-                Ports = { new ServerPort(host, port, ServerCredentials.Insecure) }
-            };
-
-            server.Start();
-            hardwareService.StartSendingHardwareUpdates();
-
-            Console.WriteLine($"Server started on {host}:{port}");
-
-            Console.ReadKey();
-            server.ShutdownAsync().Wait();
-        }
-    }
-}
+app.Run();

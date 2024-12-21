@@ -3,6 +3,7 @@
 #include <QObject>
 
 #include "HardwareService.qpb.h"
+#include "HardwareService_client.grpc.qpb.h"
 
 #include "QTimer"
 
@@ -26,7 +27,10 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void changeSensorTables();
+    void getHardwareList(const QGrpcStatus &status);
 
 private:
     GrpcHardwareMonitor::HardwareService::Client* m_client;
+    std::shared_ptr<QGrpcCallReply> replyHardwareList;
+    QTimer m_timer;
 };
