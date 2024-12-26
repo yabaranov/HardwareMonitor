@@ -7,7 +7,7 @@
 * [Сборка](#launch)
 
 ## Используемые технологии и библиотеки:
-1. Qt, Qml - язык для описания UI
+1. Qt, Qml
 2. Grpc
 3. SQLite
 4. LibreHardwareMonitorLib - библиотека на С# для получения данных устройств
@@ -16,22 +16,27 @@
 
 Клиент написан на С++ с использованием Qt и Qml.
 ### Реализовано:
-1. Подключение к компьютеру в локальной сети по IP и порту
+1. Подключение пользователя к серверу в локальной сети по IP и порту
 2. Отображение показателей процессора, видеокарты, дисков и оперативной памяти в реальном времени
 3. Сохранение показателей в БД
 4. Логирование
 5. Смена темы и языка
 
-![Image alt](https://github.com/yabaranov/Dungeon-fights/raw/master/images/login.png)
+![Image alt](https://github.com/yabaranov/HardwareMonitor/raw/master/images/login.png)
 
-![Image alt](https://github.com/yabaranov/Dungeon-fights/raw/master/images/hardwares.png)
+![Image alt](https://github.com/yabaranov/HardwareMonitor/raw/master/images/hardwares.png)
 
 ## <a id="server">Сервер</a>
 
-Сервер написан на C# с использованием LibreHardwareMonitorLib.
+Сервер написан на C# с использованием библиотеки LibreHardwareMonitorLib.
 ### Реализовано: 
 1. Подключение клиентов
-2. Аутентификация пользователя
+2. Авторизация пользователя
 3. Получение данных устройств
 
 ## <a id="launch">Сборка</a>
+
+Для сборки клиента должны быть установлены Qt и Grpc. Генерация файлов с переводом происходит при запуске фальшивой цели GenerateTranslation.
+Развёртывание проекта происходит при запуске фальшивой цели Deploy.</br>
+
+Для сборки сервера достаточно иметь установленный .NET 8.
