@@ -1,11 +1,10 @@
 #include "NetClient.h"
-#include "SensorTask.h"
 
 #include "HardwareService_client.grpc.qpb.h"
 
-#include <QGrpcHttp2Channel>
 #include <QGrpcChannelOptions>
 #include <qprotobufregistration.h>
+#include <QGrpcHttp2Channel>
 
 #include "Logger/Logger.h"
 
@@ -25,10 +24,10 @@ void NetClient::login(const QUrl& hostUri, const QString &name, const QString &p
     m_client = std::make_unique<GrpcHardwareMonitor::HardwareService::Client>();
 
     QHash<QByteArray, QByteArray> metadata =
-        {
-            { "Login", { name.toUtf8() } },
-            { "Password", { password.toUtf8() } },
-        };
+    {
+        { "Login", { name.toUtf8() } },
+        { "Password", { password.toUtf8() } },
+    };
     QGrpcChannelOptions channelOptions;
     channelOptions.setMetadata(metadata);
 
@@ -36,7 +35,8 @@ void NetClient::login(const QUrl& hostUri, const QString &name, const QString &p
     m_client->attachChannel(channel);
 
     std::shared_ptr<QGrpcCallReply> replyHardwareListInfo = m_client->getHardwareListInfo(GrpcHardwareMonitor::None());
-    connect(replyHardwareListInfo.get(), &QGrpcCallReply::finished, this, [replyHardwareListInfo, this] (const QGrpcStatus &status)
+    connect(replyHardwareListInfo.get(), &QGrpcCallReply::finished, this,
+        [replyHardwareListInfo, this] (const QGrpcStatus &status)
         {
             if (status.code() == QtGrpc::StatusCode::Ok)
             {
@@ -45,7 +45,7 @@ void NetClient::login(const QUrl& hostUri, const QString &name, const QString &p
                     *hardwareListInfo = *hardwareListInfoResponse;
 
                 Logger::instance().info("Successful authentication");
-                startSensorThread();
+                startReceivingSensorData();
                 emit auth(hardwareListInfo.get());
             }
             else if (status.code() == QtGrpc::StatusCode::Unauthenticated)
@@ -59,30 +59,37 @@ void NetClient::login(const QUrl& hostUri, const QString &name, const QString &p
 
 Q_INVOKABLE void NetClient::logout()
 {
-    stopSensorThread(); 
-    if(m_client) m_client.reset();
+    stopReceivingSensorData();
 }
 
-void NetClient::startSensorThread()
+void NetClient::changeSensorTables()
 {
-    m_sensorTask = std::make_unique<SensorTask>(m_client.get());
-
-    connect(m_sensorTask.get(), &SensorTask::networkError, this,
-            &NetClient::networkError);
-    connect(m_sensorTask.get(), &SensorTask::sensorTablesChanged, this,
-            &NetClient::sensorTablesChanged);
-
-    Logger::instance().info("Start sensor thread");
+    std::shared_ptr<QGrpcCallReply> replyHardwareList = m_client->getHardwareList(GrpcHardwareMonitor::None());
+    connect(replyHardwareList.get(), &QGrpcCallReply::finished, this,
+        [replyHardwareList, this] (const QGrpcStatus &status)
+        {
+            if (status.code() == QtGrpc::StatusCode::Ok)
+            {
+                if (const auto hardwareList = replyHardwareList->read<GrpcHardwareMonitor::HardwareList>())
+                    emit sensorTablesChanged(*hardwareList);
+            }
+            else
+                emit networkError(status.message());
+        },
+        Qt::SingleShotConnection
+    );
 }
 
-void NetClient::stopSensorThread()
+void NetClient::startReceivingSensorData()
 {
-    //disconnect(m_sensorTask.get(), &SensorTask::networkError, this,
-    //           &NetClient::networkError);
-    //disconnect(m_sensorTask.get(), &SensorTask::sensorTablesChanged, this,
-    //           &NetClient::sensorTablesChanged);
+    m_timer.start(1000);
+    connect(&m_timer, &QTimer::timeout, this, &NetClient::changeSensorTables);
+    Logger::instance().info("Start receiving sensor data");
+}
 
-    m_sensorTask.reset();
-
-    Logger::instance().info("Stop sensor thread");
+void NetClient::stopReceivingSensorData()
+{
+    m_timer.stop();
+    disconnect(&m_timer, &QTimer::timeout, this, &NetClient::changeSensorTables);
+    Logger::instance().info("Stop receiving sensor data");
 }

@@ -1,10 +1,8 @@
 #pragma once
 
 #include <QObject>
-
+#include <QTimer>
 #include "HardwareService.qpb.h"
-
-#include <QThread>
 
 namespace GrpcHardwareMonitor
 {
@@ -13,8 +11,6 @@ namespace HardwareService
 class Client;
 }
 }
-
-class SensorTask;
 
 class NetClient : public QObject
 {
@@ -31,15 +27,18 @@ Q_SIGNALS:
     void auth(GrpcHardwareMonitor::HardwareListInfo*);
     void sensorTablesChanged(const GrpcHardwareMonitor::HardwareList&);
 
+public Q_SLOTS:
+    void changeSensorTables();
+
 private:
     explicit NetClient() = default;
     ~NetClient() override;
     NetClient(const NetClient&);
     NetClient& operator=(const NetClient&);
 
-    void startSensorThread();
-    void stopSensorThread();
+    void startReceivingSensorData();
+    void stopReceivingSensorData();
 
     std::unique_ptr<GrpcHardwareMonitor::HardwareService::Client> m_client;
-    std::unique_ptr<SensorTask> m_sensorTask;
+    QTimer m_timer;
 };

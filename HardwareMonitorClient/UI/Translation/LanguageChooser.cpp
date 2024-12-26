@@ -2,7 +2,13 @@
 
 #include <QCoreApplication>
 
-LanguageChooser::LanguageChooser(QQmlApplicationEngine& engine) : m_engine(engine)
+LanguageChooser& LanguageChooser::instance(QQmlApplicationEngine* engine)
+{
+    static LanguageChooser languageChooser(engine);
+    return languageChooser;
+}
+
+LanguageChooser::LanguageChooser(QQmlApplicationEngine* engine) : m_engine(engine)
 {
 }
 
@@ -21,7 +27,7 @@ bool LanguageChooser::loadTranslation(const QString& languageCode)
     {
         qApp->installTranslator(&m_translator);
         m_isTranslatorInstalled = true;
-        m_engine.retranslate();
+        m_engine->retranslate();
     }
 
     return loaded;

@@ -19,8 +19,6 @@ public:
 
     void changeSensorTable(const GrpcHardwareMonitor::SensorRepeated& sensors);
 
-    void swap(SensorTableModel& rhs) noexcept;
-
 private:
     const quint32 NUMBER_OF_COLUMNS = 4;
 
@@ -34,5 +32,3 @@ private:
 
     QList<Sensor> m_sensors;
 };
-
-void swap(SensorTableModel& lhs, SensorTableModel& rhs) noexcept;

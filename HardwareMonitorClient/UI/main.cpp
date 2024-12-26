@@ -3,15 +3,30 @@
 #include <QQuickStyle>
 #include <QIcon>
 #include <QQmlContext>
-#include <QTranslator>
 
 #include "NetClient.h"
 #include "Logger/Logger.h"
-#include "Translations/LanguageChooser.h"
+#include "Translation/LanguageChooser.h"
 #include "SensorDatabase/SensorDatabase.h"
 #include "Models/HardwarePageModel.h"
 
-using namespace GrpcHardwareMonitor;
+void registerObjectsInQmlContext(QQmlApplicationEngine* engine)
+{
+    auto& logger = Logger::instance("ClientLogger", "Logs/log.txt");
+    engine->rootContext()->setContextProperty("logger", &logger);
+
+    auto& languageChooser = LanguageChooser::instance(engine);
+    engine->rootContext()->setContextProperty("languageChooser", &languageChooser);
+
+    auto& netClient = NetClient::instance();
+    engine->rootContext()->setContextProperty("netClient", &netClient);
+}
+
+void registerTypesInQml()
+{
+    qmlRegisterType<HardwarePageModel>("HardwarePageModel", 1, 0, "HardwarePageModel");
+    qmlRegisterType<SensorDatabase>("SensorDatabase", 1, 0, "SensorDatabase");
+}
 
 int main(int argc, char *argv[])
 {
@@ -26,24 +41,15 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed, &app,
-        []()
-        {
-            QCoreApplication::exit(-1);
-        },
-        Qt::QueuedConnection
+    []()
+    {
+        QCoreApplication::exit(-1);
+    },
+    Qt::QueuedConnection
     );
 
-    auto& logger = Logger::instance("ClientLogger", "Logs/log.txt");
-    engine.rootContext()->setContextProperty("logger", &logger);
-
-    LanguageChooser languageChooser(engine);
-    engine.rootContext()->setContextProperty("languageChooser", &languageChooser);
-
-    auto& netClient = NetClient::instance();
-    engine.rootContext()->setContextProperty("netClient", &netClient);
-
-    qmlRegisterType<HardwarePageModel>("HardwarePageModel", 1, 0, "HardwarePageModel");
-    qmlRegisterType<SensorDatabase>("SensorDatabase", 1, 0, "SensorDatabase");
+    registerObjectsInQmlContext(&engine);
+    registerTypesInQml();
 
     engine.loadFromModule("UI", "Main");
 

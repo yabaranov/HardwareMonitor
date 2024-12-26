@@ -4,7 +4,6 @@
 #include "DataMappers/SensorUnitProvider.h"
 
 #include <ranges>
-#include <algorithm>
 
 SensorTableModel::SensorTableModel(const GrpcHardwareMonitor::SensorInfoRepeated& sensorInfos)
 {
@@ -108,11 +107,3 @@ void SensorTableModel::resetMinAndMax()
         emit dataChanged(maxIndex, maxIndex);
     }
 }
-
-void SensorTableModel::swap(SensorTableModel& rhs) noexcept
-{
-    using std::swap;
-    swap(m_sensors, rhs.m_sensors);
-}
-
-void swap(SensorTableModel& lhs, SensorTableModel& rhs) noexcept {lhs.swap(rhs);}

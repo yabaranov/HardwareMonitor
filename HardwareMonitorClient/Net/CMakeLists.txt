@@ -5,8 +5,6 @@ find_package(Qt6 REQUIRED COMPONENTS Protobuf ProtobufTools Grpc GrpcTools)
 qt_standard_project_setup()
 
 qt_add_library(${PROJECT_NAME} STATIC
-    SensorTask.h
-    SensorTask.cpp
     NetClient.h
     NetClient.cpp
 )
